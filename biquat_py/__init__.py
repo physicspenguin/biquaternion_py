@@ -1,4 +1,5 @@
 from .biquaternion import(
     define_algebra,
-    biquaternion
+    BiQuaternion,
+    II, JJ, KK, EE
 )
