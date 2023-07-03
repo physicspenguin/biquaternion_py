@@ -120,7 +120,7 @@ class biquaternion:
             out = [self.coeff[i] + other.coeff[i] for i in range(8)]
             return biquaternion(out)
         else:
-            return self * biquaternion(other)
+            return self + biquaternion(other)
 
     def __sub__(self, other):
         return self + (-other)
