@@ -8,6 +8,26 @@ import numpy as np
 _BQ_I = -1
 _BQ_J = -1
 _BQ_E = 0
+_BACKEND = "general"
+
+def define_backend(backend = "general"):
+    """Defines the backend to be used.
+    You can choose to use a general implementation that supports
+    symbolic computations, or numpy for fast numerical computations
+
+    Parameters
+    ----------
+
+    backend : string, optional
+        values "general" and "numpy" are supported
+
+    Returns
+    -------
+    None
+
+    """
+    global _BACKEND
+    _BACKEND = backend
 
 
 def define_algebra(i_square=-1, j_square=-1, e_square=0):
@@ -46,12 +66,15 @@ def define_algebra(i_square=-1, j_square=-1, e_square=0):
 
 
 class BiQuaternion:
-
-    """Biquaternions as $a + II b + JJ c + KK d + EE (w + II x + JJ y + KK z)$"""
-
-    coeff = [0, 0, 0, 0, 0, 0, 0, 0]
+    """Biquaternions as $a + II b + JJ c + KK d + EE (w + II x + JJ y + KK z)$
+    """
 
     def __init__(self, gen):
+        if _BACKEND == "numpy":
+            self.coeff = np.zeros(8)
+        else:
+            self.coeff = [0, 0, 0, 0, 0, 0, 0, 0]
+
         if isinstance(gen, BiQuaternion):
             cof = gen.coeff
         elif isinstance(gen, (list, tuple, np.ndarray)):
@@ -60,8 +83,6 @@ class BiQuaternion:
             cof = gen
         else:
             cof = [gen]
-
-        self.coeff = [0, 0, 0, 0, 0, 0, 0, 0]
 
         for i, val in enumerate(cof):
             self.coeff[i] = val
@@ -139,12 +160,37 @@ class BiQuaternion:
         return self * BiQuaternion(other)
 
     def __pos__(self):
+        """ Positive of itsself
+        Returns
+        -------
+        BiQuaternion
+            self
+        """
         return BiQuaternion(self)
 
     def __neg__(self):
+        """ Negative of itsself
+        Returns
+        -------
+        BiQuaternion
+            -self
+        """
         return BiQuaternion([-self.coeff[i] for i in range(8)])
 
     def __add__(self, other):
+        """ Addition of two biquaternions
+        Parameters
+        ----------
+        self: BiQuaternion
+
+        other: BiQuaternion, float, symbolic
+
+        Returns
+        -------
+        BiQuaternion
+            Sum of self and input parameter
+        """
+
         if isinstance(other, BiQuaternion):
             out = [self.coeff[i] + other.coeff[i] for i in range(8)]
             return BiQuaternion(out)
@@ -152,15 +198,52 @@ class BiQuaternion:
         return self + BiQuaternion(other)
 
     def __sub__(self, other):
+        """ subtraction of two biquaternions
+        Parameters
+        ----------
+        self: BiQuaternion
+
+        other: BiQuaternion, float, symbolic
+
+        Returns
+        -------
+        BiQuaternion
+            Difference of self and input parameter
+        """
         return self + (-other)
 
     def __rsub__(self, other):
+        """ Addition of two biquaternions
+        Parameters
+        ----------
+        self: BiQuaternion
+
+        other: BiQuaternion, float, symbolic
+
+        Returns
+        -------
+        BiQuaternion
+            Difference of input parameter and self
+        """
         return other + (-self)
 
     __radd__ = __add__
     __rmul__ = __mul__
 
     def __repr__(self):
+        """ Representation function.
+
+        Parameters
+        ----------
+        self: self
+
+        Returns
+        -------
+        result : string
+            String representation of biquaternion that can be used to reproduce the
+            exact object.
+        """
+
         result = (
             "(" + "( " + repr(self.coeff[0]) + " )" + " + "
             "( " + repr(self.coeff[1]) + " )" + " * II" + " + "
@@ -175,6 +258,17 @@ class BiQuaternion:
         return result
 
     def __str__(self):
+        """ String function.
+
+        Parameters
+        ----------
+        self: self
+
+        Returns
+        -------
+        result : string
+            Human readable string representation of biquaternion.
+        """
         result = (
             "(" + "( " + repr(self.coeff[0]) + " )" + " + "
             "( " + repr(self.coeff[1]) + " )" + " * i" + " + "
@@ -227,6 +321,12 @@ class BiQuaternion:
         """
         return self.conjugate()
 
+    def inv(self):
+        """Calculates the inverse of the biquaternion"""
+        quad = self.quadrance()
+        primal = quad.coeff[0]
+        dual = quad.coeff[5]
+        return (quad.eps_conjugate() * (1/(primal * primal - _BQ_E * dual*dual))) * (~self)
 
 II = BiQuaternion([0, 1, 0, 0, 0, 0, 0, 0])
 JJ = BiQuaternion([0, 0, 1, 0, 0, 0, 0, 0])
