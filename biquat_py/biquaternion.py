@@ -10,7 +10,8 @@ _BQ_J = -1
 _BQ_E = 0
 _BACKEND = "general"
 
-def define_backend(backend = "general"):
+
+def define_backend(backend="general"):
     """Defines the backend to be used.
     You can choose to use a general implementation that supports
     symbolic computations, or numpy for fast numerical computations
@@ -66,8 +67,7 @@ def define_algebra(i_square=-1, j_square=-1, e_square=0):
 
 
 class BiQuaternion:
-    """Biquaternions as $a + II b + JJ c + KK d + EE (w + II x + JJ y + KK z)$
-    """
+    """Biquaternions as $a + II b + JJ c + KK d + EE (w + II x + JJ y + KK z)$"""
 
     def __init__(self, gen):
         if _BACKEND == "numpy":
@@ -160,7 +160,7 @@ class BiQuaternion:
         return self * BiQuaternion(other)
 
     def __pos__(self):
-        """ Positive of itsself
+        """Positive of itsself
         Returns
         -------
         BiQuaternion
@@ -169,7 +169,7 @@ class BiQuaternion:
         return BiQuaternion(self)
 
     def __neg__(self):
-        """ Negative of itsself
+        """Negative of itsself
         Returns
         -------
         BiQuaternion
@@ -178,7 +178,7 @@ class BiQuaternion:
         return BiQuaternion([-self.coeff[i] for i in range(8)])
 
     def __add__(self, other):
-        """ Addition of two biquaternions
+        """Addition of two biquaternions
         Parameters
         ----------
         self: BiQuaternion
@@ -198,7 +198,7 @@ class BiQuaternion:
         return self + BiQuaternion(other)
 
     def __sub__(self, other):
-        """ subtraction of two biquaternions
+        """subtraction of two biquaternions
         Parameters
         ----------
         self: BiQuaternion
@@ -213,7 +213,7 @@ class BiQuaternion:
         return self + (-other)
 
     def __rsub__(self, other):
-        """ Addition of two biquaternions
+        """Addition of two biquaternions
         Parameters
         ----------
         self: BiQuaternion
@@ -230,8 +230,16 @@ class BiQuaternion:
     __radd__ = __add__
     __rmul__ = __mul__
 
+    def __eq__(self, other):
+        """Test equality of two biquaternions"""
+        other_coeff = BiQuaternion(other).coeff
+        for i, val in enumerate(self.coeff):
+            if val != other_coeff[i]:
+                return False
+        return True
+
     def __repr__(self):
-        """ Representation function.
+        """Representation function.
 
         Parameters
         ----------
@@ -258,7 +266,7 @@ class BiQuaternion:
         return result
 
     def __str__(self):
-        """ String function.
+        """String function.
 
         Parameters
         ----------
@@ -289,20 +297,36 @@ class BiQuaternion:
         a (bi-)quaternion.
         This happens in the same fashion as for complex numbers.
         """
-        return BiQuaternion([self.coeff[0], -self.coeff[1],
-                             -self.coeff[2], -self.coeff[3],
-                             self.coeff[4], -self.coeff[5],
-                             -self.coeff[6], -self.coeff[7]])
+        return BiQuaternion(
+            [
+                self.coeff[0],
+                -self.coeff[1],
+                -self.coeff[2],
+                -self.coeff[3],
+                self.coeff[4],
+                -self.coeff[5],
+                -self.coeff[6],
+                -self.coeff[7],
+            ]
+        )
 
     def eps_conjugate(self):
         """Epsilon conjugation of the biquaternion
 
         Epsilon conjugation inverts the sign of the dual part of a quaternion
         """
-        return BiQuaternion([self.coeff[0], self.coeff[1],
-                             self.coeff[2], self.coeff[3],
-                             -self.coeff[4], -self.coeff[5],
-                             -self.coeff[6], -self.coeff[7]])
+        return BiQuaternion(
+            [
+                self.coeff[0],
+                self.coeff[1],
+                self.coeff[2],
+                self.coeff[3],
+                -self.coeff[4],
+                -self.coeff[5],
+                -self.coeff[6],
+                -self.coeff[7],
+            ]
+        )
 
     def quadrance(self):
         """Quadrance of a quaternion
@@ -310,7 +334,7 @@ class BiQuaternion:
         The quadrance of a biquaternion is its norm. It is defined as
         the product of a biquaternion and its conjugate.
         """
-        return self*(self.conjugate())
+        return self * (self.conjugate())
 
     def __invert__(self):
         """(Bi)-Quaternion conjugate of the quaternion.
@@ -326,7 +350,12 @@ class BiQuaternion:
         quad = self.quadrance()
         primal = quad.coeff[0]
         dual = quad.coeff[5]
-        return (quad.eps_conjugate() * (1/(primal * primal - _BQ_E * dual*dual))) * (~self)
+        s = primal * primal - _BQ_E * dual * dual
+        if s == 0:
+            raise ValueError("Object is not invertible")
+            return
+        return (quad.eps_conjugate() * (1 / s)) * (~self)
+
 
 II = BiQuaternion([0, 1, 0, 0, 0, 0, 0, 0])
 JJ = BiQuaternion([0, 0, 1, 0, 0, 0, 0, 0])

@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/ambv/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+  - repo: local
+    hooks:
+      - id: flake8
+        name: flake8
+        language: system
+        entry: flake8 cga_py/ tests/
+        pass_filenames: false
+      - id: pytets
+        name: pytest
+        language: system
+        entry: pytest tests/
+        pass_filenames: false
+
