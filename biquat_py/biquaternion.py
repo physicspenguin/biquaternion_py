@@ -356,11 +356,15 @@ class BiQuaternion:
             return
         return (quad.eps_conjugate() * (1 / s)) * (~self)
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         """BiQuaternion division"""
         if isinstance(other, BiQuaternion):
             return self * other.inv()
         return self * (1 / other)
+
+    def __rtruediv__(self, other):
+        """BiQuaternion division"""
+        return other * self.inv()
 
     def primal(self):
         """Calculates the primal part of the dual quaternion.

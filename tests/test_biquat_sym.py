@@ -25,6 +25,10 @@ def test_multiplication():
     ]
 
 
+def test_division():
+    assert sy.simplify(str(x / x)) == 1
+
+
 def test_addiditon():
     assert x + y == y + x
 
