@@ -356,6 +356,72 @@ class BiQuaternion:
             return
         return (quad.eps_conjugate() * (1 / s)) * (~self)
 
+    def __div__(self, other):
+        """BiQuaternion division"""
+        if isinstance(other, BiQuaternion):
+            return self * other.inv()
+        return self * (1 / other)
+
+    def primal(self):
+        """Calculates the primal part of the dual quaternion.
+
+        Returns
+        -------
+        BiQuaternion
+
+        Notes
+        -----
+        The primal part of a dual quaternion is defined as the part not containing a
+        factor epsilon.
+
+        """
+        return BiQuaternion(self.coeff[0:4])
+
+    def dual(self):
+        """Calculates the dual part of the dual quaternion
+
+        Returns
+        -------
+        BiQuaternion
+
+        Notes
+        -----
+        The dual part of a dual quaternion is defined as the part only containing
+        factors epsilon.
+
+        """
+        return BiQuaternion(self.coeff[4:])
+
+    def scalar_part(self):
+        """Calculates the scalar part of the dual quaternion
+
+        Returns
+        -------
+        BiQuaternion
+
+        Notes
+        -----
+        The scalar part of a dual quaternion is defined as the part only not containing
+        any of the numbers i, j, or k
+
+        """
+        return BiQuaternion([self.coeff[0], 0, 0, 0, self.coeff[5], 0, 0, 0])
+
+    def vector_part(self):
+        """Calculates the vector part of the dual quaternion
+
+        Returns
+        -------
+        BiQuaternion
+
+        Notes
+        -----
+        The dual part of a dual quaternion is defined as the part only containing
+        the numbers i, j, k.
+
+        """
+        return BiQuaternion([0] + self.coeff[1:4] + [0] + self.coeff[5:])
+
 
 II = BiQuaternion([0, 1, 0, 0, 0, 0, 0, 0])
 JJ = BiQuaternion([0, 0, 1, 0, 0, 0, 0, 0])
