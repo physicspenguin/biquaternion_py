@@ -13,7 +13,7 @@ y = bq.BiQuaternion([y1, y2, y3, y4, y5, y6, y7, y8])
 
 
 def test_multiplication():
-    assert (x * y).coeff == [
+    assert (x * y).coeffs == [
         x1 * y1 - x2 * y2 - x3 * y3 - x4 * y4,
         x1 * y2 + x2 * y1 + x3 * y4 - x4 * y3,
         x1 * y3 - x2 * y4 + x3 * y1 + x4 * y2,

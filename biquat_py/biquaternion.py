@@ -70,11 +70,11 @@ def define_algebra(i_square=-1, j_square=-1, e_square=0):
 
 def _sanitize_args(*args):
     """Sanitizes the input of the __new__ method of biquaternion"""
-    coeff = [0, 0, 0, 0, 0, 0, 0, 0]
+    coeffs = [0, 0, 0, 0, 0, 0, 0, 0]
     if len(args) == 1:
         gen = args[0]
         if isinstance(gen, BiQuaternion):
-            cof = gen.coeff
+            cof = gen.coeffs
         elif isinstance(gen, (list, tuple, np.ndarray)):
             if len(gen) >= 9:
                 raise ValueError("Maximum array length is 8")
@@ -85,9 +85,9 @@ def _sanitize_args(*args):
         cof = args
 
     for i, val in enumerate(cof):
-        coeff[i] = val
+        coeffs[i] = val
 
-    return coeff
+    return coeffs
 
 
 class BiQuaternion(Expr):
@@ -166,7 +166,7 @@ class BiQuaternion(Expr):
         return self._ek
 
     @property
-    def coeff(self):
+    def coeffs(self):
         return [
             self.scal,
             self.i,
@@ -181,70 +181,70 @@ class BiQuaternion(Expr):
     def __mul__(self, other):
         if isinstance(other, BiQuaternion):
             out = [
-                -_BQ_E * _BQ_I * _BQ_J * other.coeff[7] * self.coeff[7]
-                + _BQ_E * _BQ_I * other.coeff[5] * self.coeff[5]
-                + _BQ_E * _BQ_J * other.coeff[6] * self.coeff[6]
-                - _BQ_I * _BQ_J * other.coeff[3] * self.coeff[3]
-                + _BQ_E * other.coeff[4] * self.coeff[4]
-                + _BQ_I * other.coeff[1] * self.coeff[1]
-                + _BQ_J * other.coeff[2] * self.coeff[2]
-                + other.coeff[0] * self.coeff[0],
-                _BQ_E * _BQ_J * other.coeff[6] * self.coeff[7]
-                - _BQ_E * _BQ_J * other.coeff[7] * self.coeff[6]
-                + _BQ_E * other.coeff[4] * self.coeff[5]
-                + _BQ_E * other.coeff[5] * self.coeff[4]
-                + _BQ_J * other.coeff[2] * self.coeff[3]
-                - _BQ_J * other.coeff[3] * self.coeff[2]
-                + other.coeff[0] * self.coeff[1]
-                + other.coeff[1] * self.coeff[0],
-                -_BQ_E * _BQ_I * other.coeff[5] * self.coeff[7]
-                + _BQ_E * _BQ_I * other.coeff[7] * self.coeff[5]
-                + _BQ_E * other.coeff[4] * self.coeff[6]
-                + _BQ_E * other.coeff[6] * self.coeff[4]
-                - _BQ_I * other.coeff[1] * self.coeff[3]
-                + _BQ_I * other.coeff[3] * self.coeff[1]
-                + other.coeff[0] * self.coeff[2]
-                + other.coeff[2] * self.coeff[0],
-                _BQ_E * other.coeff[4] * self.coeff[7]
-                - _BQ_E * other.coeff[5] * self.coeff[6]
-                + _BQ_E * other.coeff[6] * self.coeff[5]
-                + _BQ_E * other.coeff[7] * self.coeff[4]
-                + other.coeff[0] * self.coeff[3]
-                - other.coeff[1] * self.coeff[2]
-                + other.coeff[2] * self.coeff[1]
-                + other.coeff[3] * self.coeff[0],
-                -_BQ_I * _BQ_J * other.coeff[3] * self.coeff[7]
-                - _BQ_I * _BQ_J * other.coeff[7] * self.coeff[3]
-                + _BQ_I * other.coeff[1] * self.coeff[5]
-                + _BQ_I * other.coeff[5] * self.coeff[1]
-                + _BQ_J * other.coeff[2] * self.coeff[6]
-                + _BQ_J * other.coeff[6] * self.coeff[2]
-                + other.coeff[0] * self.coeff[4]
-                + other.coeff[4] * self.coeff[0],
-                _BQ_J * other.coeff[2] * self.coeff[7]
-                - _BQ_J * other.coeff[3] * self.coeff[6]
-                + _BQ_J * other.coeff[6] * self.coeff[3]
-                - _BQ_J * other.coeff[7] * self.coeff[2]
-                + other.coeff[0] * self.coeff[5]
-                + other.coeff[1] * self.coeff[4]
-                + other.coeff[4] * self.coeff[1]
-                + other.coeff[5] * self.coeff[0],
-                -_BQ_I * other.coeff[1] * self.coeff[7]
-                + _BQ_I * other.coeff[3] * self.coeff[5]
-                - _BQ_I * other.coeff[5] * self.coeff[3]
-                + _BQ_I * other.coeff[7] * self.coeff[1]
-                + other.coeff[0] * self.coeff[6]
-                + other.coeff[2] * self.coeff[4]
-                + other.coeff[4] * self.coeff[2]
-                + other.coeff[6] * self.coeff[0],
-                other.coeff[0] * self.coeff[7]
-                - other.coeff[1] * self.coeff[6]
-                + other.coeff[2] * self.coeff[5]
-                + other.coeff[3] * self.coeff[4]
-                + other.coeff[4] * self.coeff[3]
-                - other.coeff[5] * self.coeff[2]
-                + other.coeff[6] * self.coeff[1]
-                + other.coeff[7] * self.coeff[0],
+                -_BQ_E * _BQ_I * _BQ_J * other.coeffs[7] * self.coeffs[7]
+                + _BQ_E * _BQ_I * other.coeffs[5] * self.coeffs[5]
+                + _BQ_E * _BQ_J * other.coeffs[6] * self.coeffs[6]
+                - _BQ_I * _BQ_J * other.coeffs[3] * self.coeffs[3]
+                + _BQ_E * other.coeffs[4] * self.coeffs[4]
+                + _BQ_I * other.coeffs[1] * self.coeffs[1]
+                + _BQ_J * other.coeffs[2] * self.coeffs[2]
+                + other.coeffs[0] * self.coeffs[0],
+                _BQ_E * _BQ_J * other.coeffs[6] * self.coeffs[7]
+                - _BQ_E * _BQ_J * other.coeffs[7] * self.coeffs[6]
+                + _BQ_E * other.coeffs[4] * self.coeffs[5]
+                + _BQ_E * other.coeffs[5] * self.coeffs[4]
+                + _BQ_J * other.coeffs[2] * self.coeffs[3]
+                - _BQ_J * other.coeffs[3] * self.coeffs[2]
+                + other.coeffs[0] * self.coeffs[1]
+                + other.coeffs[1] * self.coeffs[0],
+                -_BQ_E * _BQ_I * other.coeffs[5] * self.coeffs[7]
+                + _BQ_E * _BQ_I * other.coeffs[7] * self.coeffs[5]
+                + _BQ_E * other.coeffs[4] * self.coeffs[6]
+                + _BQ_E * other.coeffs[6] * self.coeffs[4]
+                - _BQ_I * other.coeffs[1] * self.coeffs[3]
+                + _BQ_I * other.coeffs[3] * self.coeffs[1]
+                + other.coeffs[0] * self.coeffs[2]
+                + other.coeffs[2] * self.coeffs[0],
+                _BQ_E * other.coeffs[4] * self.coeffs[7]
+                - _BQ_E * other.coeffs[5] * self.coeffs[6]
+                + _BQ_E * other.coeffs[6] * self.coeffs[5]
+                + _BQ_E * other.coeffs[7] * self.coeffs[4]
+                + other.coeffs[0] * self.coeffs[3]
+                - other.coeffs[1] * self.coeffs[2]
+                + other.coeffs[2] * self.coeffs[1]
+                + other.coeffs[3] * self.coeffs[0],
+                -_BQ_I * _BQ_J * other.coeffs[3] * self.coeffs[7]
+                - _BQ_I * _BQ_J * other.coeffs[7] * self.coeffs[3]
+                + _BQ_I * other.coeffs[1] * self.coeffs[5]
+                + _BQ_I * other.coeffs[5] * self.coeffs[1]
+                + _BQ_J * other.coeffs[2] * self.coeffs[6]
+                + _BQ_J * other.coeffs[6] * self.coeffs[2]
+                + other.coeffs[0] * self.coeffs[4]
+                + other.coeffs[4] * self.coeffs[0],
+                _BQ_J * other.coeffs[2] * self.coeffs[7]
+                - _BQ_J * other.coeffs[3] * self.coeffs[6]
+                + _BQ_J * other.coeffs[6] * self.coeffs[3]
+                - _BQ_J * other.coeffs[7] * self.coeffs[2]
+                + other.coeffs[0] * self.coeffs[5]
+                + other.coeffs[1] * self.coeffs[4]
+                + other.coeffs[4] * self.coeffs[1]
+                + other.coeffs[5] * self.coeffs[0],
+                -_BQ_I * other.coeffs[1] * self.coeffs[7]
+                + _BQ_I * other.coeffs[3] * self.coeffs[5]
+                - _BQ_I * other.coeffs[5] * self.coeffs[3]
+                + _BQ_I * other.coeffs[7] * self.coeffs[1]
+                + other.coeffs[0] * self.coeffs[6]
+                + other.coeffs[2] * self.coeffs[4]
+                + other.coeffs[4] * self.coeffs[2]
+                + other.coeffs[6] * self.coeffs[0],
+                other.coeffs[0] * self.coeffs[7]
+                - other.coeffs[1] * self.coeffs[6]
+                + other.coeffs[2] * self.coeffs[5]
+                + other.coeffs[3] * self.coeffs[4]
+                + other.coeffs[4] * self.coeffs[3]
+                - other.coeffs[5] * self.coeffs[2]
+                + other.coeffs[6] * self.coeffs[1]
+                + other.coeffs[7] * self.coeffs[0],
             ]
             return BiQuaternion(*out)
             # return BiQuaternion(
@@ -269,7 +269,7 @@ class BiQuaternion(Expr):
         BiQuaternion
             -self
         """
-        return BiQuaternion(*[-self.coeff[i] for i in range(8)])
+        return BiQuaternion(*[-self.coeffs[i] for i in range(8)])
 
     def __add__(self, other):
         """Addition of two biquaternions
@@ -286,7 +286,7 @@ class BiQuaternion(Expr):
         """
 
         if isinstance(other, BiQuaternion):
-            out = [self.coeff[i] + other.coeff[i] for i in range(8)]
+            out = [self.coeffs[i] + other.coeffs[i] for i in range(8)]
             return BiQuaternion(*out)
 
         return self + BiQuaternion(other)
@@ -326,8 +326,8 @@ class BiQuaternion(Expr):
 
     def __eq__(self, other):
         """Test equality of two biquaternions"""
-        othercoeff = BiQuaternion(other).coeff
-        for i, val in enumerate(self.coeff):
+        othercoeff = BiQuaternion(other).coeffs
+        for i, val in enumerate(self.coeffs):
             if val != othercoeff[i]:
                 return False
         return True
@@ -349,15 +349,15 @@ class BiQuaternion(Expr):
         """
 
         result = (
-            "(" + "( " + repr(self.coeff[0]) + " )" + " + "
-            "( " + repr(self.coeff[1]) + " )" + " * II" + " + "
-            "( " + repr(self.coeff[2]) + " )" + " * JJ" + " + "
-            "( " + repr(self.coeff[3]) + " )" + " * KK"
+            "(" + "( " + repr(self.coeffs[0]) + " )" + " + "
+            "( " + repr(self.coeffs[1]) + " )" + " * II" + " + "
+            "( " + repr(self.coeffs[2]) + " )" + " * JJ" + " + "
+            "( " + repr(self.coeffs[3]) + " )" + " * KK"
             ") + EE * ("
-            "( " + repr(self.coeff[4]) + " )" + " + "
-            "( " + repr(self.coeff[5]) + " )" + " * II" + " + "
-            "( " + repr(self.coeff[6]) + " )" + " * JJ" + " + "
-            "( " + repr(self.coeff[7]) + " )" + " * KK)"
+            "( " + repr(self.coeffs[4]) + " )" + " + "
+            "( " + repr(self.coeffs[5]) + " )" + " * II" + " + "
+            "( " + repr(self.coeffs[6]) + " )" + " * JJ" + " + "
+            "( " + repr(self.coeffs[7]) + " )" + " * KK)"
         )
         return result
 
@@ -374,15 +374,15 @@ class BiQuaternion(Expr):
         Human readable string representation of biquaternion.
         """
         result = (
-            "(" + "( " + repr(self.coeff[0]) + " )" + " + "
-            "( " + repr(self.coeff[1]) + " )" + " * i" + " + "
-            "( " + repr(self.coeff[2]) + " )" + " * j" + " + "
-            "( " + repr(self.coeff[3]) + " )" + " * k"
+            "(" + "( " + repr(self.coeffs[0]) + " )" + " + "
+            "( " + repr(self.coeffs[1]) + " )" + " * i" + " + "
+            "( " + repr(self.coeffs[2]) + " )" + " * j" + " + "
+            "( " + repr(self.coeffs[3]) + " )" + " * k"
             ") + eps * ("
-            "( " + repr(self.coeff[4]) + " )" + " + "
-            "( " + repr(self.coeff[5]) + " )" + " * i" + " + "
-            "( " + repr(self.coeff[6]) + " )" + " * j" + " + "
-            "( " + repr(self.coeff[7]) + " )" + " * k)"
+            "( " + repr(self.coeffs[4]) + " )" + " + "
+            "( " + repr(self.coeffs[5]) + " )" + " * i" + " + "
+            "( " + repr(self.coeffs[6]) + " )" + " * j" + " + "
+            "( " + repr(self.coeffs[7]) + " )" + " * k)"
         )
         return result
 
@@ -414,14 +414,14 @@ class BiQuaternion(Expr):
         """
         return BiQuaternion(
             *[
-                self.coeff[0],
-                -self.coeff[1],
-                -self.coeff[2],
-                -self.coeff[3],
-                self.coeff[4],
-                -self.coeff[5],
-                -self.coeff[6],
-                -self.coeff[7],
+                self.coeffs[0],
+                -self.coeffs[1],
+                -self.coeffs[2],
+                -self.coeffs[3],
+                self.coeffs[4],
+                -self.coeffs[5],
+                -self.coeffs[6],
+                -self.coeffs[7],
             ]
         )
 
@@ -432,14 +432,14 @@ class BiQuaternion(Expr):
         """
         return BiQuaternion(
             *[
-                self.coeff[0],
-                self.coeff[1],
-                self.coeff[2],
-                self.coeff[3],
-                -self.coeff[4],
-                -self.coeff[5],
-                -self.coeff[6],
-                -self.coeff[7],
+                self.coeffs[0],
+                self.coeffs[1],
+                self.coeffs[2],
+                self.coeffs[3],
+                -self.coeffs[4],
+                -self.coeffs[5],
+                -self.coeffs[6],
+                -self.coeffs[7],
             ]
         )
 
@@ -463,8 +463,8 @@ class BiQuaternion(Expr):
     def inv(self):
         """Calculates the inverse of the biquaternion"""
         quad = self.quadrance()
-        primal = quad.coeff[0]
-        dual = quad.coeff[5]
+        primal = quad.coeffs[0]
+        dual = quad.coeffs[5]
         s = primal * primal - _BQ_E * dual * dual
         if s == 0:
             raise ValueError("Object is not invertible")
@@ -494,7 +494,7 @@ class BiQuaternion(Expr):
         factor epsilon.
 
         """
-        return BiQuaternion(*self.coeff[0:4])
+        return BiQuaternion(*self.coeffs[0:4])
 
     def dual(self):
         """Calculates the dual part of the dual quaternion
@@ -509,7 +509,7 @@ class BiQuaternion(Expr):
         factors epsilon.
 
         """
-        return BiQuaternion(*self.coeff[4:])
+        return BiQuaternion(*self.coeffs[4:])
 
     def scalar_part(self):
         """Calculates the scalar part of the dual quaternion
@@ -524,7 +524,7 @@ class BiQuaternion(Expr):
         any of the numbers i, j, or k
 
         """
-        return BiQuaternion([self.coeff[0], 0, 0, 0, self.coeff[5], 0, 0, 0])
+        return BiQuaternion([self.coeffs[0], 0, 0, 0, self.coeffs[5], 0, 0, 0])
 
     def vector_part(self):
         """Calculates the vector part of the dual quaternion
@@ -539,7 +539,7 @@ class BiQuaternion(Expr):
         the numbers i, j, k.
 
         """
-        return BiQuaternion(*([0] + self.coeff[1:4] + [0] + self.coeff[5:]))
+        return BiQuaternion(*([0] + self.coeffs[1:4] + [0] + self.coeffs[5:]))
 
 
 II = BiQuaternion(0, 1, 0, 0, 0, 0, 0, 0)
