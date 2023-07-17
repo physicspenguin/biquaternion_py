@@ -4,6 +4,8 @@ This module implements the biquaternion class, which takes care of
 """
 
 import numpy as np
+from sympy.core.expr import Expr
+from sympy import sympify
 
 _BQ_I = -1
 _BQ_J = -1
@@ -60,21 +62,17 @@ def define_algebra(i_square=-1, j_square=-1, e_square=0):
     _BQ_I = i_square
     _BQ_J = j_square
     _BQ_E = e_square
-    II = BiQuaternion([0, 1, 0, 0, 0, 0, 0, 0])
-    JJ = BiQuaternion([0, 0, 1, 0, 0, 0, 0, 0])
-    KK = BiQuaternion([0, 0, 0, 1, 0, 0, 0, 0])
-    EE = BiQuaternion([0, 0, 0, 0, 1, 0, 0, 0])
+    II = BiQuaternion(*[0, 1, 0, 0, 0, 0, 0, 0])
+    JJ = BiQuaternion(*[0, 0, 1, 0, 0, 0, 0, 0])
+    KK = BiQuaternion(*[0, 0, 0, 1, 0, 0, 0, 0])
+    EE = BiQuaternion(*[0, 0, 0, 0, 1, 0, 0, 0])
 
 
-class BiQuaternion:
-    """Biquaternions as $a + II b + JJ c + KK d + EE (w + II x + JJ y + KK z)$"""
-
-    def __init__(self, gen):
-        if _BACKEND == "numpy":
-            self.coeff = np.zeros(8)
-        else:
-            self.coeff = [0, 0, 0, 0, 0, 0, 0, 0]
-
+def _sanitize_args(*args):
+    """Sanitizes the input of the __new__ method of biquaternion"""
+    coeff = [0, 0, 0, 0, 0, 0, 0, 0]
+    if len(args) == 1:
+        gen = args[0]
         if isinstance(gen, BiQuaternion):
             cof = gen.coeff
         elif isinstance(gen, (list, tuple, np.ndarray)):
@@ -83,9 +81,102 @@ class BiQuaternion:
             cof = gen
         else:
             cof = [gen]
+    else:
+        cof = args
 
-        for i, val in enumerate(cof):
-            self.coeff[i] = val
+    for i, val in enumerate(cof):
+        coeff[i] = val
+
+    return coeff
+
+
+class BiQuaternion(Expr):
+    """Biquaternions as $a + II b + JJ c + KK d + EE (w + II x + JJ y + KK z)$"""
+
+    is_commutative = False
+    _op_priority = 11.5
+
+    def __new__(cls, *args):
+        # Sanitize the arguments
+
+        scal, i, j, k, eps, ei, ej, ek = _sanitize_args(*args)
+        scal, i, j, k, eps, ei, ej, ek = map(sympify, (scal, i, j, k, eps, ei, ej, ek))
+
+        if any(i.is_commutative is False for i in [scal, i, j, k, eps, ei, ej, ek]):
+            raise ValueError("arguments have to be commutative")
+        else:
+            obj = Expr.__new__(cls, scal, i, j, k, eps, ei, ej, ek)
+            obj._scal = scal
+            obj._i = i
+            obj._j = j
+            obj._k = k
+            obj._eps = eps
+            obj._ei = ei
+            obj._ej = ej
+            obj._ek = ek
+            return obj
+
+    # def __init__(self, *args):
+    #     # if _BACKEND == "numpy":
+    #     #     self._coeff = np.zeros(8)
+    #     # else:
+    #     #     self._coeff = [0, 0, 0, 0, 0, 0, 0, 0]
+    #     # if isinstance(gen, BiQuaternion):
+    #     #     cof = gen._coeff
+    #     # elif isinstance(gen, (list, tuple, np.ndarray)):
+    #     #     if len(gen) >= 9:
+    #     #         raise ValueError("Maximum array length is 8")
+    #     #     cof = gen
+    #     # else:
+    #     #     cof = [gen]
+
+    #     # for i, val in enumerate(cof):
+    #     #     self._coeff[i] = val
+
+    @property
+    def scal(self):
+        return self._scal
+
+    @property
+    def i(self):
+        return self._i
+
+    @property
+    def j(self):
+        return self._j
+
+    @property
+    def k(self):
+        return self._k
+
+    @property
+    def eps(self):
+        return self._eps
+
+    @property
+    def ei(self):
+        return self._ei
+
+    @property
+    def ej(self):
+        return self._ej
+
+    @property
+    def ek(self):
+        return self._ek
+
+    @property
+    def coeff(self):
+        return [
+            self.scal,
+            self.i,
+            self.j,
+            self.k,
+            self.eps,
+            self.ei,
+            self.ej,
+            self.ek,
+        ]
 
     def __mul__(self, other):
         if isinstance(other, BiQuaternion):
@@ -155,7 +246,10 @@ class BiQuaternion:
                 + other.coeff[6] * self.coeff[1]
                 + other.coeff[7] * self.coeff[0],
             ]
-            return BiQuaternion(out)
+            return BiQuaternion(*out)
+            # return BiQuaternion(
+            #     out[0], out[1], out[2], out[3], out[4], out[5], out[6], out[7]
+            # )
 
         return self * BiQuaternion(other)
 
@@ -175,7 +269,7 @@ class BiQuaternion:
         BiQuaternion
             -self
         """
-        return BiQuaternion([-self.coeff[i] for i in range(8)])
+        return BiQuaternion(*[-self.coeff[i] for i in range(8)])
 
     def __add__(self, other):
         """Addition of two biquaternions
@@ -193,7 +287,7 @@ class BiQuaternion:
 
         if isinstance(other, BiQuaternion):
             out = [self.coeff[i] + other.coeff[i] for i in range(8)]
-            return BiQuaternion(out)
+            return BiQuaternion(*out)
 
         return self + BiQuaternion(other)
 
@@ -232,11 +326,13 @@ class BiQuaternion:
 
     def __eq__(self, other):
         """Test equality of two biquaternions"""
-        other_coeff = BiQuaternion(other).coeff
+        othercoeff = BiQuaternion(other).coeff
         for i, val in enumerate(self.coeff):
-            if val != other_coeff[i]:
+            if val != othercoeff[i]:
                 return False
         return True
+
+    __hash__ = super.__hash__
 
     def __repr__(self):
         """Representation function.
@@ -275,7 +371,7 @@ class BiQuaternion:
         Returns
         -------
         result : string
-            Human readable string representation of biquaternion.
+        Human readable string representation of biquaternion.
         """
         result = (
             "(" + "( " + repr(self.coeff[0]) + " )" + " + "
@@ -290,6 +386,25 @@ class BiQuaternion:
         )
         return result
 
+    def __pow__(self, other):
+        if isinstance(other, int):
+            if other >= 0:
+                pw = 1
+                for i in range(other):
+                    pw = pw * self
+            else:
+                pw = 1
+                for i in range(-other):
+                    pw = pw / self
+            return pw
+        else:
+            raise TypeError(
+                "unsupported operand type(s) for ** or pow(): "
+                + str(type(self))
+                + " and "
+                + str(type(other))
+            )
+
     def conjugate(self):
         """(Bi)-Quaternion conjugate of the quaternion.
 
@@ -298,7 +413,7 @@ class BiQuaternion:
         This happens in the same fashion as for complex numbers.
         """
         return BiQuaternion(
-            [
+            *[
                 self.coeff[0],
                 -self.coeff[1],
                 -self.coeff[2],
@@ -316,7 +431,7 @@ class BiQuaternion:
         Epsilon conjugation inverts the sign of the dual part of a quaternion
         """
         return BiQuaternion(
-            [
+            *[
                 self.coeff[0],
                 self.coeff[1],
                 self.coeff[2],
@@ -379,7 +494,7 @@ class BiQuaternion:
         factor epsilon.
 
         """
-        return BiQuaternion(self.coeff[0:4])
+        return BiQuaternion(*self.coeff[0:4])
 
     def dual(self):
         """Calculates the dual part of the dual quaternion
@@ -394,7 +509,7 @@ class BiQuaternion:
         factors epsilon.
 
         """
-        return BiQuaternion(self.coeff[4:])
+        return BiQuaternion(*self.coeff[4:])
 
     def scalar_part(self):
         """Calculates the scalar part of the dual quaternion
@@ -424,10 +539,10 @@ class BiQuaternion:
         the numbers i, j, k.
 
         """
-        return BiQuaternion([0] + self.coeff[1:4] + [0] + self.coeff[5:])
+        return BiQuaternion(*([0] + self.coeff[1:4] + [0] + self.coeff[5:]))
 
 
-II = BiQuaternion([0, 1, 0, 0, 0, 0, 0, 0])
-JJ = BiQuaternion([0, 0, 1, 0, 0, 0, 0, 0])
-KK = BiQuaternion([0, 0, 0, 1, 0, 0, 0, 0])
-EE = BiQuaternion([0, 0, 0, 0, 1, 0, 0, 0])
+II = BiQuaternion(0, 1, 0, 0, 0, 0, 0, 0)
+JJ = BiQuaternion(0, 0, 1, 0, 0, 0, 0, 0)
+KK = BiQuaternion(0, 0, 0, 1, 0, 0, 0, 0)
+EE = BiQuaternion(0, 0, 0, 0, 1, 0, 0, 0)
