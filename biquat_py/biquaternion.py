@@ -16,7 +16,7 @@ Misc variables:
 
 import numpy as np
 from sympy.core.expr import Expr
-from sympy import sympify
+from sympy import sympify, expand
 
 _BQ_I = -1
 _BQ_J = -1
@@ -188,40 +188,72 @@ class BiQuaternion(Expr):
         """Value of the scalar part of the instance of BiQuaternion."""
         return self._scal
 
+    @scal.setter
+    def scal(self, val):
+        self._scal = val
+
     @property
     def i(self):
         """Value of the II part of the instance of BiQuaternion."""
         return self._i
+
+    @i.setter
+    def i(self, val):
+        self._i = val
 
     @property
     def j(self):
         """Value of the JJ part of the instance of BiQuaternion."""
         return self._j
 
+    @j.setter
+    def j(self, val):
+        self._j = val
+
     @property
     def k(self):
         """Value of the KK part of the instance of BiQuaternion."""
         return self._k
+
+    @k.setter
+    def k(self, val):
+        self._k = val
 
     @property
     def eps(self):
         """Value of the eps part of the instance of BiQuaternion."""
         return self._eps
 
+    @eps.setter
+    def eps(self, val):
+        self._eps = val
+
     @property
     def ei(self):
         """Value of the eps*II part of the instance of BiQuaternion."""
         return self._ei
+
+    @ei.setter
+    def ei(self, val):
+        self._ei = val
 
     @property
     def ej(self):
         """Value of the eps*JJ part of the instance of BiQuaternion."""
         return self._ej
 
+    @ej.setter
+    def ej(self, val):
+        self._ej = val
+
     @property
     def ek(self):
         """Value of the eps*KK part of the instance of BiQuaternion."""
         return self._ek
+
+    @ek.setter
+    def ek(self, val):
+        self._ek = val
 
     @property
     def coeffs(self):
@@ -236,6 +268,17 @@ class BiQuaternion(Expr):
             self.ej,
             self.ek,
         ]
+
+    @coeffs.setter
+    def coeffs(self, val):
+        self.scal = val[0]
+        self.i = val[1]
+        self.j = val[2]
+        self.k = val[3]
+        self.eps = val[4]
+        self.ei = val[5]
+        self.ej = val[6]
+        self.ek = val[7]
 
     def __mul__(self, other):
         """Multiply BiQuaternion with other."""
@@ -610,11 +653,14 @@ class BiQuaternion(Expr):
         """
         return BiQuaternion(*([0] + self.coeffs[1:4] + [0] + self.coeffs[5:]))
 
-    def coeff(self, var, power):
+    def coeff(self, var, power=1, right=False, _first=True):
         """Rewriting of Expr.coeff to work for BiQuaternions."""
         # TODO: Get every coeff after each other. Run expr.coeff on it and
         # construct new quaternion describind the coeffs.
-        pass
+        coeffed = [0, 0, 0, 0, 0, 0, 0, 0]
+        for i, val in enumerate(self.coeffs):
+            coeffed[i] = expand(val).coeff(var, power, right, _first)
+        return BiQuaternion(coeffed)
 
 
 II = BiQuaternion(0, 1, 0, 0, 0, 0, 0, 0)
