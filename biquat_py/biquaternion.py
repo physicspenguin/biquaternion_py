@@ -662,6 +662,27 @@ class BiQuaternion(Expr):
             coeffed[i] = expand(val).coeff(var, power, right, _first)
         return BiQuaternion(coeffed)
 
+    def apply_elementwise(self, func, *args):
+        """Apply a function with specified arguments elementwise.
+
+        Parameters
+        ----------
+        func : function
+            Function to be applied elementwise
+        *args : unknown
+            Arguments to be passed to the function
+
+        Returns
+        -------
+        BiQuaternion
+            Biquaternion with function applied to each coefficient individually.
+
+        """
+        coeffed = [0, 0, 0, 0, 0, 0, 0, 0]
+        for i, val in enumerate(self.coeffs):
+            coeffed[i] = func(val, *args)
+        return BiQuaternion(coeffed)
+
 
 II = BiQuaternion(0, 1, 0, 0, 0, 0, 0, 0)
 JJ = BiQuaternion(0, 0, 1, 0, 0, 0, 0, 0)
