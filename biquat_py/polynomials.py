@@ -187,6 +187,9 @@ class Poly(Expr):
     def coeff(self, var, power=1, right=False, _first=True):
         return expand(self.poly).coeff(var, power, right, _first)
 
+    def lcoeff(self, var):
+        return expand(self.poly).coeff(var, _max_pow(self.poly, var))
+
     # # Handling of indeterminates
     # if isinstance(indets, Symbol):
     #     self.indets = [indets]
