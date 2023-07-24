@@ -77,7 +77,7 @@ def _all_indet_coeffs(expr, indet):
     """
     deg = _max_pow(expr, indet)
 
-    coeffs = [expr.coeff(indet, n) for n in range(deg)]
+    coeffs = [expr.coeff(indet, n) for n in range(deg + 1)]
     return coeffs
 
 
@@ -115,8 +115,7 @@ class Poly(Expr):
 
         """
         poly, *indets = args
-        indets = indets.f
-        poly, *indets = map(sympify, (args[0], *args[1:]))
+        poly, *indets = map(sympify, (poly, *indets))
         obj = Expr.__new__(cls, poly, *indets)
         obj._poly = poly
         obj._indets = indets
@@ -140,8 +139,8 @@ class Poly(Expr):
         if isinstance(other, Poly):
             return Poly(
                 expand(self.poly * other.poly),
-                self._indets,
-                list(set(other.indets).difference(set(self.indets))),
+                *self.indets,
+                *set(other.indets).difference(set(self.indets)),
             )
         else:
             return Poly(expand(self.poly * sympify(other)), self.indets)
@@ -150,8 +149,8 @@ class Poly(Expr):
         if isinstance(other, Poly):
             return Poly(
                 expand(other.poly * self.poly),
-                self._indets,
-                list(set(other.indets).difference(set(self.indets))),
+                *self.indets,
+                *set(other.indets).difference(set(self.indets)),
             )
         else:
             return Poly(expand(sympify(other) * self.poly), self.indets)
@@ -160,8 +159,8 @@ class Poly(Expr):
         if isinstance(other, Poly):
             return Poly(
                 expand(self.poly + other.poly),
-                self._indets,
-                list(set(other.indets).difference(set(self.indets))),
+                *self.indets,
+                *set(other.indets).difference(set(self.indets)),
             )
         else:
             return Poly(expand(self.poly + sympify(other)), self.indets)
@@ -179,6 +178,14 @@ class Poly(Expr):
 
     def __str__(self):
         return f"Poly({self.poly},{self.indets})"
+
+    def __eq__(self, other):
+        return self.poly == other.poly and set(self.indets) == set(other.indets)
+
+    __hash__ = super.__hash__
+
+    def coeff(self, var, power=1, right=False, _first=True):
+        return expand(self.poly).coeff(var, power, right, _first)
 
     # # Handling of indeterminates
     # if isinstance(indets, Symbol):
