@@ -39,21 +39,21 @@ def test_subtraction():
 
 def test_conjugation():
     assert ~x == bq.BiQuaternion([x1, -x2, -x3, -x4, x5, -x6, -x7, -x8])
-    assert x.conjugate == bq.BiQuaternion([x1, -x2, -x3, -x4, x5, -x6, -x7, -x8])
+    assert x.conjugate() == bq.BiQuaternion([x1, -x2, -x3, -x4, x5, -x6, -x7, -x8])
 
 
 def test_epsilon_conjugation():
-    assert x.eps_conjugate == bq.BiQuaternion([x1, x2, x3, x4, -x5, -x6, -x7, -x8])
+    assert x.eps_conjugate() == bq.BiQuaternion([x1, x2, x3, x4, -x5, -x6, -x7, -x8])
 
 
 def test_inverse():
-    assert sy.simplify(x * x.inv) == 1
-    assert sy.simplify(x.inv * x) == 1
+    assert sy.simplify(x * x.inv()) == 1
+    assert sy.simplify(x.inv() * x) == 1
 
 
 def test_non_invertible():
     with nt.assert_raises(ValueError):
-        bq.BiQuaternion([0, 0, 0, 0, x1, x2, x3, x4]).inv
+        bq.BiQuaternion([0, 0, 0, 0, x1, x2, x3, x4]).inv()
 
 
 def test_scalars():

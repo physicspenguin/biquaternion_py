@@ -1,31 +1,9 @@
 """Implementation of polynomial class and associated functions."""
 
 # from sympy.core.symbol import Symbol
-from sympy import Poly as sympoly
 from sympy import expand, Pow, Expr, sympify
 
 # from .biquaternion import BiQuaternion
-
-
-def _coeff_gen(poly, indets):
-    """
-    Generate coefficient array for a polynomial with given indeterminate.
-
-    Parameters
-    ----------
-    poly : sympy expression
-        Polynomial given.
-
-    indets : list of sympy.core.symbol.Symbol
-        Indeterminate for which to generate the coefficients
-
-    """
-    print(poly)
-    if isinstance(poly, list):
-        for i, val in enumerate(poly):
-            poly[i] = _coeff_gen(val, indets[1:])
-    else:
-        return sympoly(poly, indets[0])
 
 
 def _max_pow(expr, indet):
@@ -129,11 +107,14 @@ class Poly(Expr):
     def indets(self):
         return self._indets
 
+    def deg(self, var):
+        return _max_pow(self.poly, var)
+
     def __pos__(self):
-        return Poly(self.poly, self.indets)
+        return Poly(self.poly, *self.indets)
 
     def __neg__(self):
-        return Poly(-self.poly, self.indets)
+        return Poly(-self.poly, *self.indets)
 
     def __mul__(self, other):
         if isinstance(other, Poly):
@@ -143,7 +124,7 @@ class Poly(Expr):
                 *set(other.indets).difference(set(self.indets)),
             )
         else:
-            return Poly(expand(self.poly * sympify(other)), self.indets)
+            return Poly(expand(self.poly * sympify(other)), *self.indets)
 
     def __rmul__(self, other):
         if isinstance(other, Poly):
@@ -153,7 +134,7 @@ class Poly(Expr):
                 *set(other.indets).difference(set(self.indets)),
             )
         else:
-            return Poly(expand(sympify(other) * self.poly), self.indets)
+            return Poly(expand(sympify(other) * self.poly), *self.indets)
 
     def __add__(self, other):
         if isinstance(other, Poly):
@@ -163,7 +144,7 @@ class Poly(Expr):
                 *set(other.indets).difference(set(self.indets)),
             )
         else:
-            return Poly(expand(self.poly + sympify(other)), self.indets)
+            return Poly(expand(self.poly + sympify(other)), *self.indets)
 
     __radd__ = __add__
 
@@ -234,3 +215,62 @@ class Poly(Expr):
         list of BiQuaternions
             List of coefficients for powers of var in descending order.
         """
+
+
+def poly_div(poly_1, poly_2, var, right=True):
+    """Polynomial division with remainder of poly_1 and poly_2 with respect to var.
+
+    Parameters
+    ----------
+    poly_1 : Poly
+        Polynomial which should be divided.
+    poly_2 : Poly
+        Polynomial by which should be divided.
+    var : sympy.Symbol
+        Variable with respect to which to divide.
+    right : (optional, default = True) bool
+        Should right division be used.
+
+    Returns
+    -------
+    quotient : Poly
+        Result of division
+    remainder : Poly
+        Remainder of division
+
+    Notes
+    -----
+    This function produces polynomials `quotient` and `remainder` such that
+    poly_1 = poly_2 * quotient + remainder for `right = True`
+    poly_1 = quotient * poly_2 + remainder for `right = False`
+    """
+
+    init_lead_coeff = poly_2.lcoeff(var)
+
+    if right:
+        f0 = init_lead_coeff * poly_1
+        g0 = init_lead_coeff * poly_2
+    else:
+        f0 = poly_1 * init_lead_coeff
+        g0 = poly_2 * init_lead_coeff
+
+    quotient = Poly(0, var)
+    remainder = f0
+
+    m = remainder.deg(var)
+    n = poly_2.deg(var)
+
+    while m >= n:
+        lead_coeff = remainder.lcoeff(var)
+        quotient = quotient + (lead_coeff * (var ** (m - n)))
+        if right:
+            remainder = expand(remainder - (g0 * lead_coeff * var ** (m - n)))
+        else:
+            remainder = expand(remainder - (lead_coeff * var ** (m - n) * g0))
+
+        m = remainder.deg(var)
+
+    if right:
+        return quotient, init_lead_coeff * remainder
+    else:
+        return quotient, remainder * init_lead_coeff

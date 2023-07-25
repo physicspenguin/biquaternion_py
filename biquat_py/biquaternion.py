@@ -17,6 +17,7 @@ Misc variables:
 import numpy as np
 from sympy.core.expr import Expr
 from sympy import sympify, expand
+from .polynomials import Poly
 
 _BQ_I = -1
 _BQ_J = -1
@@ -161,7 +162,7 @@ class BiQuaternion(Expr):
     """
 
     is_commutative = False
-    _op_priority = 11.5
+    _op_priority = 11.1
 
     def __new__(cls, *args):
         """Create new instance of BiQuaternion."""
@@ -350,6 +351,8 @@ class BiQuaternion(Expr):
                 + other.coeffs[7] * self.coeffs[0],
             ]
             return BiQuaternion(*out)
+        elif isinstance(other, Poly):
+            return other.__rmul__(self)
 
         return self * BiQuaternion(other)
 
@@ -390,6 +393,9 @@ class BiQuaternion(Expr):
         if isinstance(other, BiQuaternion):
             out = [self.coeffs[i] + other.coeffs[i] for i in range(8)]
             return BiQuaternion(*out)
+
+        elif isinstance(other, Poly):
+            return other.__radd__(self)
 
         return self + BiQuaternion(other)
 
@@ -509,7 +515,6 @@ class BiQuaternion(Expr):
                 + str(type(other))
             )
 
-    @property
     def conjugate(self):
         """Conjugate of this instance of BiQuaternion.
 
@@ -530,7 +535,6 @@ class BiQuaternion(Expr):
             ]
         )
 
-    @property
     def eps_conjugate(self):
         """Epsilon conjugation of the biquaternion.
 
@@ -549,14 +553,13 @@ class BiQuaternion(Expr):
             ]
         )
 
-    @property
     def quadrance(self):
         """Quadrance of a quaternion.
 
         The quadrance of a biquaternion is its norm. It is defined as
         the product of a biquaternion and its conjugate.
         """
-        return self * (self.conjugate)
+        return self * (self.conjugate())
 
     def __invert__(self):
         """(Bi)-Quaternion conjugate of the quaternion.
@@ -565,31 +568,29 @@ class BiQuaternion(Expr):
         a (bi-)quaternion.
         This happens in the same fashion as for complex numbers.
         """
-        return self.conjugate
+        return self.conjugate()
 
-    @property
     def inv(self):
         """Inverse of the biquaternion."""
-        quad = self.quadrance
+        quad = self.quadrance()
         primal = quad.coeffs[0]
         dual = quad.coeffs[5]
         s = primal * primal - _BQ_E * dual * dual
         if s == 0:
             raise ValueError("Object is not invertible")
             return
-        return (quad.eps_conjugate * (1 / s)) * (~self)
+        return (quad.eps_conjugate() * (1 / s)) * (~self)
 
     def __truediv__(self, other):
         """Division of BiQuaternion by other."""
         if isinstance(other, BiQuaternion):
-            return self * other.inv
+            return self * other.inv()
         return self * (1 / other)
 
     def __rtruediv__(self, other):
         """Divide other by BiQuaternion."""
-        return other * self.inv
+        return other * self.inv()
 
-    @property
     def primal(self):
         """Primal part of the dual quaternion.
 
@@ -605,7 +606,6 @@ class BiQuaternion(Expr):
         """
         return BiQuaternion(*self.coeffs[0:4])
 
-    @property
     def dual(self):
         """Dual part of the dual quaternion.
 
@@ -621,7 +621,6 @@ class BiQuaternion(Expr):
         """
         return BiQuaternion(*self.coeffs[4:])
 
-    @property
     def scalar_part(self):
         """Scalar part of the dual quaternion.
 
@@ -637,7 +636,6 @@ class BiQuaternion(Expr):
         """
         return BiQuaternion([self.coeffs[0], 0, 0, 0, self.coeffs[5], 0, 0, 0])
 
-    @property
     def vector_part(self):
         """Vector part of the dual quaternion.
 
