@@ -21,18 +21,19 @@ def _max_pow(expr, indet):
     int
         Maximal power of indet in expr
     """
+    if isinstance(expr, (float, int, complex)):
+        return 0
+
     deg = max(
         (
             z.as_base_exp()[1] if z.as_base_exp()[0] == indet else 0
             for z in expand(expr).atoms(Pow)
         ),
-        default=1,
+        default=0,
     )
-    if deg <= 1:
+    if deg == 0:
         if expr.coeff(indet, 1) != 0:
             return 1
-        elif expr.coeff(indet, 0) != 0:
-            return 0
         else:
             return deg
     return deg
@@ -74,7 +75,18 @@ def _all_coeffs(expr, indets):
     List
         List containing coefficients of powers of indet in descending order.
     """
-    pass
+
+    if len(indets) == 1 and not isinstance(expr, list):
+        return _all_indet_coeffs(expr, indets[0])
+    elif len(indets) == 1 and isinstance(expr, list):
+        for i, exp in enumerate(expr):
+            expr[i] = _all_indet_coeffs(exp, indets[0])
+    elif isinstance(expr, list):
+        for i, exp in enumerate(expr):
+            expr[i] = _all_coeffs(exp, indets[1:])
+    else:
+        expr = _all_coeffs(_all_indet_coeffs(expr, indets[0]), indets[1:])
+    return expr
 
 
 class Poly(Expr):
@@ -171,38 +183,7 @@ class Poly(Expr):
     def lcoeff(self, var):
         return expand(self.poly).coeff(var, _max_pow(self.poly, var))
 
-    # # Handling of indeterminates
-    # if isinstance(indets, Symbol):
-    #     self.indets = [indets]
-    # elif isinstance(indets, list):
-    #     self.indet = [0 for i, _ in enumerate(indets)]
-    #     if isinstance(indets[0], Symbol):
-    #         for i, val in enumerate(indets):
-    #             self.indet[i] = val
-    #     else:
-    #         for i, val in enumerate(indets):
-    #             sym = Symbol(str(val))
-    #             self.indet[i] = sym
-    # elif isinstance(indets, str):
-    #     self.indets = symbols(indets)
-
-    # else:
-    #     raise ValueError(
-    #         "indets must be of type, list(sympy Symbols), list(strings), string"
-    #     )
-
-    # # Assume that this is now given as a list of coefficients.
-    # # Each coefficient can then again be a list, such that multivariate cases
-    # # are handled
-    # if isinstance(poly, list):
-    #     self.coeff = poly
-    # # This assumes a sympy expression
-    # # (Allthough most likely it will then be read as a biquaternion class)
-    # else:
-    #     coeffs = sympoly(poly, self.indets[0]).all_coeffs()
-    #     self.coeff = _coeff_gen(coeffs, indets[1:])
-
-    def all_coeffs(self, var):
+    def all_var_coeffs(self, var):
         """Compute all coefficients with respect to var.
 
         Parameters
@@ -215,6 +196,11 @@ class Poly(Expr):
         list of BiQuaternions
             List of coefficients for powers of var in descending order.
         """
+        return _all_indet_coeffs(self.poly, var)
+
+    def all_coeffs(self):
+        """Compute all coefficients of all variables in given order as nested list."""
+        return _all_coeffs(self.poly, self.indets)
 
 
 def poly_div(poly_1, poly_2, var, right=True):
@@ -244,7 +230,6 @@ def poly_div(poly_1, poly_2, var, right=True):
     poly_1 = poly_2 * quotient + remainder for `right = True`
     poly_1 = quotient * poly_2 + remainder for `right = False`
     """
-
     init_lead_coeff = poly_2.lcoeff(var)
 
     if right:
@@ -263,6 +248,7 @@ def poly_div(poly_1, poly_2, var, right=True):
     while m >= n:
         lead_coeff = remainder.lcoeff(var)
         quotient = quotient + (lead_coeff * (var ** (m - n)))
+
         if right:
             remainder = expand(remainder - (g0 * lead_coeff * var ** (m - n)))
         else:
