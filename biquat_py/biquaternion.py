@@ -686,3 +686,25 @@ II = BiQuaternion(0, 1, 0, 0, 0, 0, 0, 0)
 JJ = BiQuaternion(0, 0, 1, 0, 0, 0, 0, 0)
 KK = BiQuaternion(0, 0, 0, 1, 0, 0, 0, 0)
 EE = BiQuaternion(0, 0, 0, 0, 1, 0, 0, 0)
+
+
+def point(coord):
+    """Generate Biquaternion reperesentation of a point at specified coordinates."""
+    return BiQuaternion([1, *coord])
+
+
+def line(coord):
+    return BiQuaternion([0, *coord[0:3], 0, *[-coord[i + 3] for i in range(3)]])
+
+
+def act(quaternion, x):
+    """Let a BiQuaternion act on a point."""
+    return quaternion.eps_conjugate() * x * quaternion.conjugate()
+
+
+def act_on_line(quaternion, lin):
+    """Let a BiQuaternion act on a line."""
+    if isinstance(lin, list):
+        lin = line(lin)
+
+    return quaternion * lin * quaternion.conjugate()
