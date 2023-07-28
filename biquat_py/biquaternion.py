@@ -708,3 +708,38 @@ def act_on_line(quaternion, lin):
         lin = line(lin)
 
     return quaternion * lin * quaternion.conjugate()
+
+
+def inner(first, second):
+    """Inner product of first and second, derived from the quaternion algebra."""
+    return (first * second.conjugate() + second * first.conjugate()) / 2
+
+
+def outer(first, second):
+    """Outer product of first and second, derived from the quaternion algebra."""
+    return (first * second - second * first) / 2
+
+
+def fiber_project(quat):
+    """Project biquaternion onto Study's quadric.
+
+    Parameters
+    ----------
+    quat : BiQuaternion
+        Quaternion which is to be projected
+
+    Returns
+    -------
+    BiQuaternion
+        Biquaternion lying on Study's quadric, corresponding to the same transformation.
+    """
+
+    primal = quat.primal()
+    dual = quat.dual()
+    return (
+        (
+            2 * primal.quadrance()
+            - EE * (primal * dual.conjugate() - dual * primal.conjugate())
+        )
+        * primal
+    ) / 2

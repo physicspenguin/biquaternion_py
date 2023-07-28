@@ -89,6 +89,21 @@ def _all_coeffs(expr, indets):
     return expr
 
 
+def _eval_poly(coeffs, vals, right=True):
+    """Helper function to evaluate polynomial defined by `coeffs` at `vals`."""
+    out = 0
+    for i, val in enumerate(coeffs):
+        if isinstance(val, list):
+            temp = _eval_poly(val, vals[1:], right)
+        else:
+            temp = val
+        if right:
+            out += temp * (vals[0] ** i)
+        else:
+            out += (vals[0] ** i) * temp
+    return out
+
+
 class Poly(Expr):
     """Class implementing arbitrary polynomials."""
 
@@ -202,6 +217,23 @@ class Poly(Expr):
         """Compute all coefficients in ascending order of all variables
         in given order as nested list."""
         return _all_coeffs(self.poly, self.indets)
+
+    def eval(self, vals, right=True):
+        """Evaluate polynomial for variables set as in val.
+
+        Parameters
+        ----------
+        vals : list
+            List of values which the indeterminates should take.
+        right : bool (optional, defaulf = True)
+            Should polynomial be evaluated assuming variables are left,
+        or right of coefficients.
+
+        Returns
+        -------
+        type(val)
+        """
+        return _eval_poly(self.all_coeffs(), vals, right)
 
 
 def poly_div(poly_1, poly_2, var, right=True):
