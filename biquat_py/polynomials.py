@@ -52,7 +52,7 @@ def _all_indet_coeffs(expr, indet):
     Returns
     -------
     List
-        List containing coefficients of powers of indet in descending order.
+        List containing coefficients of powers of indet in ascending order.
     """
     deg = _max_pow(expr, indet)
 
@@ -73,7 +73,7 @@ def _all_coeffs(expr, indets):
     Returns
     -------
     List
-        List containing coefficients of powers of indet in descending order.
+        List containing coefficients of powers of indet in ascending order.
     """
 
     if len(indets) == 1 and not isinstance(expr, list):
@@ -194,12 +194,13 @@ class Poly(Expr):
         Returns
         -------
         list of BiQuaternions
-            List of coefficients for powers of var in descending order.
+            List of coefficients for powers of var in ascending order.
         """
         return _all_indet_coeffs(self.poly, var)
 
     def all_coeffs(self):
-        """Compute all coefficients of all variables in given order as nested list."""
+        """Compute all coefficients in ascending order of all variables
+        in given order as nested list."""
         return _all_coeffs(self.poly, self.indets)
 
 
