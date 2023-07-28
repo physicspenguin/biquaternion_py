@@ -3,8 +3,6 @@
 # from sympy.core.symbol import Symbol
 from sympy import expand, Pow, Expr, sympify
 
-# from .biquaternion import BiQuaternion
-
 
 def _max_pow(expr, indet):
     """Find the maximal power of indet in expr.
@@ -193,9 +191,11 @@ class Poly(Expr):
     __hash__ = super.__hash__
 
     def coeff(self, var, power=1, right=False, _first=True):
+        """Coefficient of polynomial with respect to `var**(power)`."""
         return expand(self.poly).coeff(var, power, right, _first)
 
     def lcoeff(self, var):
+        """Leading coefficient of polynomial with respect to `var`."""
         return expand(self.poly).coeff(var, _max_pow(self.poly, var))
 
     def all_var_coeffs(self, var):
