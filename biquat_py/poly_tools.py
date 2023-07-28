@@ -18,7 +18,26 @@ def max_real_poly_fact(poly):
 
     gcd = 0
 
-    for i in range(4):
-        gcd = sy.gcd(gcd, polys[i])
-        gcd = sy.gcd(gcd, polys[i + 4])
+    for val in polys:
+        gcd = sy.gcd(gcd, val)
+    return gcd
+
+
+def gcd_conj_pd(poly):
+    """Real gcd of c, primal*dual.conjugate(), primal.conjugate()*dual."""
+    c = max_real_poly_fact(poly.primal())
+    primal = (poly * (1 / c)).poly.primal()
+    dual = poly.poly.dual()
+
+    primal_dual_conj = (primal * dual.conjugate()).coeffs[0:4]
+    primal_conj_dual = (primal.conjugate() * dual).coeffs[0:4]
+
+    gcd = sy.gcd(c, primal_dual_conj[0])
+
+    for i in range(3):
+        gcd = sy.gcd(gcd, primal_dual_conj[i + 1])
+
+    for val in primal_conj_dual:
+        gcd = sy.gcd(gcd, val)
+
     return gcd
