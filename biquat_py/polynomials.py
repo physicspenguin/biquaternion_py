@@ -190,6 +190,12 @@ class Poly(Expr):
 
     __hash__ = super.__hash__
 
+    def primal(self):
+        return _poly_primal(self)
+
+    def dual(self):
+        return _poly_dual(self)
+
     def coeff(self, var, power=1, right=False, _first=True):
         """Coefficient of polynomial with respect to `var**(power)`."""
         return expand(self.poly).coeff(var, power, right, _first)
@@ -293,3 +299,15 @@ def poly_div(poly_1, poly_2, var, right=True):
         return quotient, init_lead_coeff * remainder
     else:
         return quotient, remainder * init_lead_coeff
+
+
+def _poly_primal(poly):
+    from .biquaternion import BiQuaternion
+
+    return Poly((poly.poly * BiQuaternion([1])).primal(), *poly.indets)
+
+
+def _poly_dual(poly):
+    from .biquaternion import BiQuaternion
+
+    return Poly((poly.poly * BiQuaternion([1])).dual(), *poly.indets)
