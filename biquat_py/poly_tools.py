@@ -41,3 +41,35 @@ def gcd_conj_pd(poly):
         gcd = sy.gcd(gcd, val)
 
     return gcd
+
+
+def is_poly_reduced(poly):
+    """Check if polynomial is reduced.
+
+    Parameters
+    ----------
+    poly : Poly
+        Polynomial which to check for reducedness.
+
+    Returns
+    -------
+    bool
+        True if the polynomial is reduced.
+
+    Notes
+    -----
+    A polynomial is called reduced, if the primal and dual part have no common
+    real factor. [1]_
+
+    .. [1]Z. Li, J. Schicho, H.-P. Schröcker,
+       The rational motion of minimal dual quaternion degree with prescribed trajectory,
+       Computer Aided Geometric Design,
+       Volume 41,
+       2016,
+       Pages 1-9,
+       ISSN 0167-8396,
+       https://doi.org/10.1016/j.cagd.2015.10.002.
+    """
+    return (
+        sy.gcd(max_real_poly_fact(poly.primal()), max_real_poly_fact(poly.dual())) == 1
+    )
