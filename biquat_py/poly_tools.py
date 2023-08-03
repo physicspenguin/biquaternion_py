@@ -1,6 +1,7 @@
 """Extra functions for polynomials."""
 
 from .biquaternion import BiQuaternion
+from .polynomials import poly_div, Poly
 import sympy as sy
 
 
@@ -73,3 +74,67 @@ def is_poly_reduced(poly):
     return (
         sy.gcd(max_real_poly_fact(poly.primal()), max_real_poly_fact(poly.dual())) == 1
     )
+
+
+# def is_poly_real(poly):
+#     return np.allclose(poly.poly.coeffs[1:], np.zeros(7))
+
+
+def irreducible_factors(poly):
+    """Calculate the irreducible factors of a polynomial."""
+    # if not is_poly_real(poly):
+    #     raise ValueError("Polynomial must have real coefficients.")
+    var = poly.indets[0]
+    t = sy.Symbol(var.name, real=True)
+    poly1 = Poly(poly.poly.subs({var: t}), t)
+    factors = sy.polys.polyroots.root_factors(poly1.poly)
+    out = []
+    for i, val in enumerate(factors):
+        if val.is_real:
+            out = out + [val]
+        else:
+            for j, val2 in enumerate(factors[i:]):
+                if val == val2.conjugate():
+                    out = out + [sy.expand(val * val2)]
+                    factors.pop(i + j)
+
+    for i, val in enumerate(out):
+        out[i] = Poly(val.subs({t: var}), var)
+    return poly.lcoeff(var), out
+
+
+def split_lin_factor(poly, norm):
+    """Split off linear factor with norm `norm` from poly."""
+    if len(poly.indets) != 1:
+        raise ValueError("Only univariate polynomials supported.")
+    if poly.indets != norm.indets:
+        raise ValueError("Poly and norm must have the same indeterminates.")
+
+    indet = poly.indets[0]
+    _, rem = poly_div(poly, norm, indet, False)
+    root = -(rem.poly.coeff(indet, 1).inv()) * rem.poly.coeff(indet, 0)
+    lin_fact = Poly(indet - root, indet)
+    quot, _ = poly_div(poly, lin_fact, indet, False)
+    return quot, lin_fact
+
+
+def factorize_from_list(poly, factors):
+    """Factorize polynomial given a list of factors of the norm polynomial."""
+    if len(poly.indets) != 1:
+        raise ValueError("Only univariate polynomials supported.")
+    out = []
+    poly0 = poly
+    for i, val in enumerate(factors[::-1]):
+        poly0, lin_fact = split_lin_factor(poly0, Poly(val, *poly0.indets))
+        out = [lin_fact] + out
+    return out
+
+
+def factorize_bq_poly(poly):
+    """Factorize Biquaternion polynomial into linear factors."""
+    norm = poly.norm()
+    # if not is_poly_real(norm):
+    #     raise ValueError("Norm must be a real polynomial.")
+    norm = Poly(norm.poly.scal, *norm.indets)
+    _, factors = irreducible_factors(norm)
+    return factorize_from_list(poly, factors)

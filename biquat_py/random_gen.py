@@ -37,9 +37,11 @@ def rand_line(maximum=10):
     q = [rand_rational(maximum) for i in range(4)]
     return BiQuaternion(
         [
+            0,
             (p[0] * q[1] - p[1] * q[0]),
             (p[0] * q[2] - p[2] * q[0]),
             (p[0] * q[3] - p[3] * q[0]),
+            0,
             (p[2] * q[3] - p[3] * q[2]),
             (p[3] * q[1] - p[1] * q[3]),
             (p[1] * q[2] - p[2] * q[1]),

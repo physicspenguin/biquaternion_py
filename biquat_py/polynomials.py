@@ -196,6 +196,15 @@ class Poly(Expr):
     def dual(self):
         return _poly_dual(self)
 
+    def conjugate(self):
+        return _poly_conjugate(self)
+
+    def eps_conjugate(self):
+        return _poly_eps_conjugate(self)
+
+    def norm(self):
+        return self * self.conjugate()
+
     def coeff(self, var, power=1, right=False, _first=True):
         """Coefficient of polynomial with respect to `var**(power)`."""
         return expand(self.poly).coeff(var, power, right, _first)
@@ -311,3 +320,15 @@ def _poly_dual(poly):
     from .biquaternion import BiQuaternion
 
     return Poly((poly.poly * BiQuaternion([1])).dual(), *poly.indets)
+
+
+def _poly_conjugate(poly):
+    from .biquaternion import BiQuaternion
+
+    return Poly((poly.poly * BiQuaternion([1])).conjugate(), *poly.indets)
+
+
+def _poly_eps_conjugate(poly):
+    from .biquaternion import BiQuaternion
+
+    return Poly((poly.poly * BiQuaternion([1])).eps_conjugate(), *poly.indets)
