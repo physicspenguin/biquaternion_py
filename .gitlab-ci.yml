@@ -3,7 +3,8 @@ stages:
 - cov
 
 default:
-  image: python3
+  image: 
+    name: python3
   
 testing:
   stage: test
