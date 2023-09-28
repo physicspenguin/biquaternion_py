@@ -5,11 +5,15 @@ stages:
 testing:
   stage: test
   script:
+    - pip install -r requirements.txt
+    - pip install -r requirements_dev.txt
     - tox -p
 
 coverage_test:
   stage: cov
   script:
+    - pip install -r requirements.txt
+    - pip install -r requirements_dev.txt
     - pytest --cov=biquat_py tests
   artifacts:
     when: always
@@ -18,5 +22,5 @@ coverage_test:
     paths:
       - "report.xml"
     expire_in: 1 week
-    
+
   coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
