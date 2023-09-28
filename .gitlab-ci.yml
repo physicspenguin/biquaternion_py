@@ -4,7 +4,7 @@ stages:
 
 default:
   image: 
-    name: python3
+    name: python:bullseye
   
 testing:
   stage: test
