@@ -2,6 +2,9 @@ stages:
 - test
 - cov
 
+default:
+  image: python3
+  
 testing:
   stage: test
   script:
