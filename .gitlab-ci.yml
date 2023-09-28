@@ -1,0 +1,19 @@
+stages:
+  -test
+  -cov
+
+testing:
+  stage: test
+  script:
+    - tox -p
+
+coverage_test:
+  stage: cov
+  script:
+    - pytest --cov=biquat_py tests
+  artifacts:
+    when: always
+    reports:
+
+
+coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
