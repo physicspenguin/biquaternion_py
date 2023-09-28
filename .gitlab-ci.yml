@@ -1,6 +1,6 @@
 stages:
-  -test
-  -cov
+- test
+- cov
 
 testing:
   stage: test
@@ -13,7 +13,10 @@ coverage_test:
     - pytest --cov=biquat_py tests
   artifacts:
     when: always
-    reports:
-
-
-coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+    reports: 
+      junit: report.xml
+    paths:
+      - "report.xml"
+    expire_in: 1 week
+    
+  coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
