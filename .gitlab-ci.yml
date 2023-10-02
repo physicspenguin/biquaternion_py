@@ -18,7 +18,7 @@ testing:
 flaking:
   stage: flake
   image:
-    name: python:latest
+    name: python:bullseye
   script:
     - pip install -r requirements_dev.txt
     - tox -e flake8
@@ -26,7 +26,7 @@ flaking:
 coverage_test:
   stage: cov
   image:
-    name: python:latest
+    name: python:bullseye
   script:
     - pip install -r requirements_dev.txt
     - tox -e cov
