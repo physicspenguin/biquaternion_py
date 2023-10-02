@@ -7,6 +7,7 @@ testing:
   stage: test
   image:
     name: $IMAGE
+    entrypoint: [ '/bin/bash', '-c', 'ln -snf /bin/bash /bin/sh && /bin/bash -c $0' ]
   script:
     - pip install tox
     - tox -e python3
