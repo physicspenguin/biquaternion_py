@@ -20,7 +20,7 @@ flaking:
     name: python:latest
   script:
     - pip install tox
-    -tox -e flake8
+    - tox -e flake8
 
 coverage_test:
   stage: cov
