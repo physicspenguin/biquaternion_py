@@ -1,34 +1,32 @@
-
 stages:
 - test
+- flake
 - cov
-
 
 testing:
   stage: test
   image:
     name: $IMAGE
   script:
-    - pip install -r requirements_dev.txt
-    - tox -p
+    - pip install tox
+    - tox -e python3
   parallel:
     matrix:
       - IMAGE: [python:3.11,python:3.10,python:3.9,python:3.8]
+
+flaking:
+  stage: flake
+  image:
+    name: python:latest
+  script:
+    - pip install tox
+    -tox -e flake8
 
 coverage_test:
   stage: cov
   image:
     name: python:latest
   script:
-    - pip install -r requirements.txt
-    - pip install -r requirements_dev.txt
-    - pytest --cov=biquat_py tests
-  artifacts:
-    when: always
-    reports: 
-      junit: report.xml
-    paths:
-      - "report.xml"
-    expire_in: 1 week
-
+    - pip install -r tox
+    - tox -e cov
   coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
