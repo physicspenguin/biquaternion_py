@@ -1,5 +1,9 @@
-[![build](https://git.uibk.ac.at/c8441225/biquaternion_py/badges/main/pipeline.svg)](https://git.uibk.ac.at/c8441225/biquaternion_py/-/jobs)
-[![coverage](https://git.uibk.ac.at/c8441225/biquaternion_py/badges/main/coverage.svg?job=run_tests)](https://git.uibk.ac.at/c8441225/biquaternion_py/-/jobs)
+
+[![coverage report](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/badges/master/coverage.svg)](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/-/commits/master)
+
+[![pipeline status](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/badges/master/pipeline.svg)](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/-/commits/master)
+
+[![Latest Release](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/-/badges/release.svg)](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/-/releases)
 
 
 # biquaternion_py
