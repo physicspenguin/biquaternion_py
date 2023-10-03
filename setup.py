@@ -12,7 +12,7 @@ setup(
     ],
     license="GPL v3",
     license_files="LICENSE",
-    url="https://git.uibk.ac.at/c8441225/biquaternion_py",
+    url="https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py",
     author=me,
     author_email=my_email,
     maintainer=me,
