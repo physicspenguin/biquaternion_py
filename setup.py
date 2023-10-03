@@ -6,7 +6,7 @@ me = "Daren A. Thimm"
 my_email = "daren.thimm@uibk.ac.at"
 setup(
     name="biquaternion-py",
-    version="0.1.0",
+    version="0.1.1",
     packages=[
         "biquat_py",
     ],
