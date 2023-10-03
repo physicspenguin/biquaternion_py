@@ -14,7 +14,7 @@ testing:
     - tox -e python3
   parallel:
     matrix:
-      - IMAGE: [python:3.11-bullseye]
+      - IMAGE: [python:3.11-bullseye,python:3.10-bullseye,python:3.9-bullseye,python:3.8-bullseye]
 
 flaking:
   stage: flake
