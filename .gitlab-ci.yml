@@ -9,7 +9,7 @@ testing:
     name: $IMAGE
     entrypoint: [ '/bin/bash', '-c', 'ln -snf /bin/bash /bin/sh && /bin/bash -c $0' ]
   script:
-    - pip install -r requirements_dev.txt
+    - pip install tox
     - tox -e python3
   parallel:
     matrix:
@@ -20,7 +20,7 @@ flaking:
   image:
     name: python:bullseye
   script:
-    - pip install -r requirements_dev.txt
+    - pip install -r tox
     - tox -e flake8
 
 coverage_test:
@@ -28,6 +28,6 @@ coverage_test:
   image:
     name: python:bullseye
   script:
-    - pip install -r requirements_dev.txt
+    - pip install -r tox
     - tox -e cov
   coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
