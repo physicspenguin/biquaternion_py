@@ -1,5 +1,6 @@
 from .biquaternion import BiQuaternion
 import numpy.random as rand
+from sympy import Rational
 
 
 def rand_rational(maximum=10):
@@ -18,7 +19,7 @@ def rand_rational(maximum=10):
 
     """
     return (-1) ** (rand.randint(2)) * (
-        rand.randint(maximum) / (rand.randint(maximum) + 1)
+        Rational(rand.randint(maximum), (rand.randint(maximum) + 1))
     )
 
 
