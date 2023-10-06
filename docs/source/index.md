@@ -11,6 +11,8 @@
 ```{toctree}
 :caption: 'Contents:'
 :maxdepth: 2
+
+Usage
 ```
 
 # Indices and tables
