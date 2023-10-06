@@ -5,5 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 doc = [
-    "sphinx ~= 7.1.0"
+    "sphinx ~= 7.1.0",
+    "myst-parser",
+    "sphinx-rtd-theme"
 ]

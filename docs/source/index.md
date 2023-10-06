@@ -5,6 +5,9 @@
 
 # Welcome to biquaternion_py's documentation!
 
+```{include} ./../../README.md
+```
+
 ```{toctree}
 :caption: 'Contents:'
 :maxdepth: 2
