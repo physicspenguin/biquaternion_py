@@ -13,6 +13,7 @@
 :maxdepth: 2
 
 Usage
+ipynb_notebooks/Tutorial
 ```
 
 # Indices and tables

@@ -7,5 +7,6 @@ build-backend = "setuptools.build_meta"
 doc = [
     "sphinx ~= 7.1.0",
     "myst-parser",
-    "sphinx-rtd-theme"
+    "sphinx-rtd-theme",
+    "nbsphinx",
 ]
