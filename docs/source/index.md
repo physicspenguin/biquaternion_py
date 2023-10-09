@@ -14,6 +14,8 @@
 
 Usage
 ipynb_notebooks/Tutorial
+
+modules
 ```
 
 # Indices and tables
