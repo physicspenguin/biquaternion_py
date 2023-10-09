@@ -20,12 +20,9 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "numpydoc",
     "nbsphinx",
 ]
-
-autoapi_dirs = ["./../../biquat_py"]
-autoapi_options = [""]
-autoapi_ignore = ["__init__.py"]
 
 templates_path = ["_templates"]
 exclude_patterns = []
