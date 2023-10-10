@@ -45,4 +45,5 @@ dev = [
 ]
 
 [project.urls]
-Documentation = "https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py"
+Documentation = "http://biquaternion-py.readthedocs.io/"
+Source  = "https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py"
