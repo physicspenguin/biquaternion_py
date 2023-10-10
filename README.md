@@ -1,5 +1,6 @@
 [![coverage report](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/badges/master/coverage.svg)](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/-/commits/master)
 [![pipeline status](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/badges/master/pipeline.svg)](https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py/-/commits/master)
+[![Documentation Status](https://readthedocs.org/projects/biquaternion-py/badge/?version=latest)](https://biquaternion-py.readthedocs.io/en/latest/?badge=latest)
 
 # biquaternion_py
 
