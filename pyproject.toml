@@ -1,5 +1,48 @@
+[project]
+name = "biquaternion_py"
+version = "0.1.3"
+authors = [
+    {name = "Daren Thimm", email = "daren.thimm@uibk.ac.at"},
+]
+maintainers = [
+    {name = "Daren Thimm", email = "daren.thimm@uibk.ac.at"},
+]
+description = "Sympy compatible implementation of general biquaternion algebras."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "License :: OSI Approved :: GPLv3 License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+]
+dependencies = [
+        "numpy>=1.24.3",
+        "sympy>=1.12"
+]
+license = {"file"= "LICENSE"}
+
+
 [build-system]
-requires = ["setuptools>=42","numba>=0.57.1","numpy>=1.23.5"]
-extra_requires = ["pytest>=7.2.0"]
+requires = [
+"setuptools==67.7.0",
+]
 build-backend = "setuptools.build_meta"
 
+[project.optional-dependencies]
+doc = [
+    "sphinx ~= 7.1.0",
+    "myst-parser",
+    "sphinx-rtd-theme",
+    "nbsphinx",
+    "numpydoc"
+]
+dev = [
+    "flake8 == 6.0.0",
+    "pytest == 7.2.0",
+    "pre-commit == 3.3.3",
+    "tox == 3.27.0"
+]
+
+[project.urls]
+Documentation = "https://git.uibk.ac.at/geometrie-vermessung/biquaternion_py"

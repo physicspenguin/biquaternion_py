@@ -62,7 +62,7 @@ def is_poly_reduced(poly):
     A polynomial is called reduced, if the primal and dual part have no common
     real factor. [1]_
 
-    .. [1]Z. Li, J. Schicho, H.-P. Schröcker,
+    .. [1] Z. Li, J. Schicho, H.-P. Schröcker,
        The rational motion of minimal dual quaternion degree with prescribed trajectory,
        Computer Aided Geometric Design,
        Volume 41,
