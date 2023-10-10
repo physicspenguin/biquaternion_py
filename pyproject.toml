@@ -11,7 +11,7 @@ description = "Sympy compatible implementation of general biquaternion algebras.
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
-    "License :: OSI Approved :: GPLv3 License",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
