@@ -19,7 +19,9 @@ extensions = [
     "sphinx.ext.duration",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
+    "sphinx.ext.mathjax",
     "numpydoc",
     "nbsphinx",
 ]
@@ -31,6 +33,13 @@ exclude_patterns = []
 # exclude inherited class members
 numpydoc_show_inherited_class_members = False
 numpydoc_show_class_members = False
+
+# viewcode config
+viewcode_line_numbers = True
+
+# nbsphinx config
+hightlight_language = "ipython"
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
