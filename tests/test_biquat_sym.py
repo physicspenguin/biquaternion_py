@@ -1,6 +1,6 @@
-import biquat_py as bq
+import biquaternion_py as bq
 import numpy.testing as nt
-from biquat_py import II, JJ, EE
+from biquaternion_py import II, JJ, EE
 import sympy as sy
 
 bq.define_algebra()
