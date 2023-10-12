@@ -60,7 +60,7 @@ def define_algebra(i_square=-1, j_square=-1, e_square=0):
 
 
 def _sanitize_args(*args):
-    """Sanitizes the input of the __new__ method of biquaternion."""
+    """Sanitizes the input of the __new__ method of BiQuaternion."""
     coeffs = [0, 0, 0, 0, 0, 0, 0, 0]
     if len(args) == 1:
         gen = args[0]
@@ -654,7 +654,7 @@ class BiQuaternion(Expr):
     def coeff(self, var, power=1, right=False, _first=True):
         """Rewriting of Expr.coeff to work for BiQuaternions."""
         # TODO: Get every coeff after each other. Run expr.coeff on it and
-        # construct new quaternion describind the coeffs.
+        # construct new quaternion describing the coeffs.
         coeffed = [0, 0, 0, 0, 0, 0, 0, 0]
         for i, val in enumerate(self.coeffs):
             coeffed[i] = expand(val).coeff(var, power, right, _first)
@@ -686,60 +686,3 @@ II = BiQuaternion(0, 1, 0, 0, 0, 0, 0, 0)
 JJ = BiQuaternion(0, 0, 1, 0, 0, 0, 0, 0)
 KK = BiQuaternion(0, 0, 0, 1, 0, 0, 0, 0)
 EE = BiQuaternion(0, 0, 0, 0, 1, 0, 0, 0)
-
-
-def point(coord):
-    """Generate Biquaternion reperesentation of a point at specified coordinates."""
-    return BiQuaternion([1, *coord])
-
-
-def line(coord):
-    return BiQuaternion([0, *coord[0:3], 0, *[-coord[i + 3] for i in range(3)]])
-
-
-def act(quaternion, x):
-    """Let a BiQuaternion act on a point."""
-    return quaternion.eps_conjugate() * x * quaternion.conjugate()
-
-
-def act_on_line(quaternion, lin):
-    """Let a BiQuaternion act on a line."""
-    if isinstance(lin, list):
-        lin = line(lin)
-
-    return quaternion * lin * quaternion.conjugate()
-
-
-def inner(first, second):
-    """Inner product of first and second, derived from the quaternion algebra."""
-    return (first * second.conjugate() + second * first.conjugate()) / 2
-
-
-def outer(first, second):
-    """Outer product of first and second, derived from the quaternion algebra."""
-    return (first * second - second * first) / 2
-
-
-def fiber_project(quat):
-    """Project biquaternion onto Study's quadric.
-
-    Parameters
-    ----------
-    quat : BiQuaternion
-        Quaternion which is to be projected
-
-    Returns
-    -------
-    BiQuaternion
-        Biquaternion lying on Study's quadric, corresponding to the same transformation.
-    """
-
-    primal = quat.primal()
-    dual = quat.dual()
-    return (
-        (
-            2 * primal.quadrance()
-            - EE * (primal * dual.conjugate() - dual * primal.conjugate())
-        )
-        * primal
-    ) / 2

@@ -5,13 +5,21 @@ from .biquaternion import (
     JJ,
     KK,
     EE,
-    act,
+)
+from .biquat_tools import (
+    point_to_quat,
+    quat_to_point,
+    hom_point_to_quat,
+    quat_to_hom_point,
+    pluecker_to_quat,
+    quat_to_pluecker,
+    line_to_pluecker,
+    act_on_point,
     act_on_line,
-    fiber_project,
+    smart_act,
     inner,
-    line,
-    point,
     outer,
+    fiber_project,
 )
 from .polynomials import Poly, poly_div
 from .lines import quaternion_to_pluecker, pluecker_to_quaternion
