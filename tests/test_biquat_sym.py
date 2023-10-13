@@ -66,3 +66,4 @@ def test_define_algebra():
     assert II * II == y1
     assert JJ * JJ == y2
     assert EE * EE == y3
+    bq.define_algebra()

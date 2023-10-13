@@ -87,6 +87,31 @@ def _all_coeffs(expr, indets):
     return expr
 
 
+def _single_indet_terms(coeffs, exponents):
+    """Calculate the non zero terms for a coefficient array and write it
+    into a tuple of form ((exponents of indets),coefficient)."""
+
+    out = []
+    deg = len(coeffs) - 1
+    for i, val in enumerate(coeffs[::-1]):
+        exps = (*exponents, deg - i)
+        if val == 0:
+            continue
+        elif isinstance(val, list):
+            out = out + _single_indet_terms(val, exps)
+        else:
+            out = out + [((*exponents, deg - i), val)]
+    return out
+
+
+def _terms(poly):
+    """Helper function calculating the non zero terms in lex order."""
+    coeffs = poly.all_coeffs()
+    term_arr = _single_indet_terms(coeffs, ())
+
+    return term_arr
+
+
 def _eval_poly(coeffs, vals, right=True):
     """Helper function to evaluate polynomial defined by `coeffs` at `vals`."""
     out = 0
@@ -114,16 +139,14 @@ def _sanitize_args(*args):
         else:
             arg_warn()
     if len(args) == 2:
-        if isinstance(args[1], (list, tuple, ndarray)) and isinstance(args[0], Expr):
+        if isinstance(args[1], (list, tuple, ndarray)):
             return args[0], *args[1]
-        elif isinstance(args[1], Symbol) and isinstance(args[0], Expr):
+        elif isinstance(args[1], Symbol):
             return args
         else:
             arg_warn()
     else:
-        if isinstance(args[0], Expr) and all(
-            list(map(lambda x: isinstance(x, Symbol), args[1:]))
-        ):
+        if all(list(map(lambda x: isinstance(x, Symbol), args[1:]))):
             return args
         else:
             arg_warn()
@@ -278,6 +301,9 @@ class Poly(Expr):
         type(val)
         """
         return _eval_poly(self.all_coeffs(), vals, right)
+
+    def terms(self):
+        return _terms(self)
 
 
 def poly_div(poly_1, poly_2, var, right=True):

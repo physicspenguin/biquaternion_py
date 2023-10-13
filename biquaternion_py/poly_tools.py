@@ -125,7 +125,9 @@ def factorize_from_list(poly, factors):
     out = []
     poly0 = poly
     for i, val in enumerate(factors[::-1]):
-        poly0, lin_fact = split_lin_factor(poly0, Poly(val, *poly0.indets))
+        if poly.indets != val.indets:
+            raise ValueError("Poly and factor must have the same indeterminates.")
+        poly0, lin_fact = split_lin_factor(poly0, val)
         out = [lin_fact] + out
     return out
 
