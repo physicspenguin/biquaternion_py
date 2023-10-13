@@ -1,6 +1,6 @@
-import biquat_py as bq
+import biquaternion_py as bq
 import numpy.testing as nt
-from biquat_py import II, JJ, EE
+from biquaternion_py import II, JJ, EE
 import sympy as sy
 
 bq.define_algebra()
@@ -66,3 +66,4 @@ def test_define_algebra():
     assert II * II == y1
     assert JJ * JJ == y2
     assert EE * EE == y3
+    bq.define_algebra()

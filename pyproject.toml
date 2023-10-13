@@ -1,6 +1,6 @@
 [project]
 name = "biquaternion_py"
-version = "0.1.3"
+version = "1.0.0"
 authors = [
     {name = "Daren Thimm", email = "daren.thimm@uibk.ac.at"},
 ]
@@ -21,6 +21,9 @@ dependencies = [
         "sympy>=1.12"
 ]
 license = {"file"= "LICENSE"}
+
+[tool.setuptools]
+packages = ["biquaternion_py"]
 
 
 [build-system]

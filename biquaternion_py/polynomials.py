@@ -1,7 +1,7 @@
 """Implementation of polynomial class and associated functions."""
 
-# from sympy.core.symbol import Symbol
-from sympy import expand, Pow, Expr, sympify
+from sympy import expand, Pow, Expr, sympify, Symbol
+from numpy import ndarray
 
 
 def _max_pow(expr, indet):
@@ -87,6 +87,31 @@ def _all_coeffs(expr, indets):
     return expr
 
 
+def _single_indet_terms(coeffs, exponents):
+    """Calculate the non zero terms for a coefficient array and write it
+    into a tuple of form ((exponents of indets),coefficient)."""
+
+    out = []
+    deg = len(coeffs) - 1
+    for i, val in enumerate(coeffs[::-1]):
+        exps = (*exponents, deg - i)
+        if val == 0:
+            continue
+        elif isinstance(val, list):
+            out = out + _single_indet_terms(val, exps)
+        else:
+            out = out + [((*exponents, deg - i), val)]
+    return out
+
+
+def _terms(poly):
+    """Helper function calculating the non zero terms in lex order."""
+    coeffs = poly.all_coeffs()
+    term_arr = _single_indet_terms(coeffs, ())
+
+    return term_arr
+
+
 def _eval_poly(coeffs, vals, right=True):
     """Helper function to evaluate polynomial defined by `coeffs` at `vals`."""
     out = 0
@@ -100,6 +125,31 @@ def _eval_poly(coeffs, vals, right=True):
         else:
             out += (vals[0] ** i) * temp
     return out
+
+
+def _sanitize_args(*args):
+    """Sanitize input of __new__ method of Poly for easiert generation."""
+
+    def arg_warn():
+        print("Poly need arguments of type: (Poly), (expr,indets) or (expr,[indets])")
+
+    if len(args) == 1:
+        if isinstance(args[0], Poly):
+            return args[0].poly, *(args[0].indets)
+        else:
+            arg_warn()
+    if len(args) == 2:
+        if isinstance(args[1], (list, tuple, ndarray)):
+            return args[0], *args[1]
+        elif isinstance(args[1], Symbol):
+            return args
+        else:
+            arg_warn()
+    else:
+        if all(list(map(lambda x: isinstance(x, Symbol), args[1:]))):
+            return args
+        else:
+            arg_warn()
 
 
 class Poly(Expr):
@@ -117,7 +167,7 @@ class Poly(Expr):
         poly: sympy.Expr, tuple
 
         """
-        poly, *indets = args
+        poly, *indets = _sanitize_args(*args)
         poly, *indets = map(sympify, (poly, *indets))
         obj = Expr.__new__(cls, poly, *indets)
         obj._poly = poly
@@ -186,7 +236,9 @@ class Poly(Expr):
         return f"Poly({self.poly},{self.indets})"
 
     def __eq__(self, other):
-        return self.poly == other.poly and set(self.indets) == set(other.indets)
+        return self.poly.expand() == other.poly.expand() and set(self.indets) == set(
+            other.indets
+        )
 
     __hash__ = super.__hash__
 
@@ -213,20 +265,20 @@ class Poly(Expr):
         """Leading coefficient of polynomial with respect to `var`."""
         return expand(self.poly).coeff(var, _max_pow(self.poly, var))
 
-    def all_var_coeffs(self, var):
+    def all_indet_coeffs(self, indet):
         """Compute all coefficients with respect to var.
 
         Parameters
         ----------
-        var : sympy.Symbol
-            Variable with respect which to computa all coefficients.
+        indet : sympy.Symbol
+            Variable with respect which to compute all coefficients.
 
         Returns
         -------
         list of BiQuaternions
-            List of coefficients for powers of var in ascending order.
+            List of coefficients for powers of indet in ascending order.
         """
-        return _all_indet_coeffs(self.poly, var)
+        return _all_indet_coeffs(self.poly, indet)
 
     def all_coeffs(self):
         """Compute all coefficients in ascending order of all variables
@@ -249,6 +301,9 @@ class Poly(Expr):
         type(val)
         """
         return _eval_poly(self.all_coeffs(), vals, right)
+
+    def terms(self):
+        return _terms(self)
 
 
 def poly_div(poly_1, poly_2, var, right=True):
