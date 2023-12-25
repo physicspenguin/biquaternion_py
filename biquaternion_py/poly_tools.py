@@ -87,7 +87,7 @@ def irreducible_factors(poly):
     var = poly.indets[0]
     t = sy.Symbol(var.name, real=True)
     poly1 = Poly(poly.poly.subs({var: t}), t)
-    factors = sy.polys.polyroots.root_factors(poly1.poly)
+    factors = sy.polys.polyroots.root_factors(poly1.poly, domain='CC')
     out = []
     for i, val in enumerate(factors):
         if val.is_real:
