@@ -80,14 +80,35 @@ def is_poly_reduced(poly):
 #     return np.allclose(poly.poly.coeffs[1:], np.zeros(7))
 
 
-def irreducible_factors(poly):
-    """Calculate the irreducible factors of a polynomial."""
+def irreducible_factors(poly, domain=None):
+    """Calculate the irreducible factors of a polynomial.
+    Parameters
+    ----------
+    poly : Poly
+        Polynomial of which to calculate the irreducible factors.
+    domain : string, optional
+        Domain over which to calculate the irreducible factors.
+        (Default None lets sympy decide which domain to use.)
+
+    Returns
+    -------
+    out : array of Poly
+        List of irreducible factors.
+
+    Notes
+    -----
+    If the irreducible factors are not calculated correctly this might be an issue
+    of sympy assuming to much about the domain. Chaning this to "QQ" or "RR"
+    """
     # if not is_poly_real(poly):
     #     raise ValueError("Polynomial must have real coefficients.")
     var = poly.indets[0]
     t = sy.Symbol(var.name, real=True)
     poly1 = Poly(poly.poly.subs({var: t}), t)
-    factors = sy.polys.polyroots.root_factors(poly1.poly)
+    if domain:
+        factors = sy.polys.polyroots.root_factors(poly1.poly, t, domain=domain)
+    else:
+        factors = sy.polys.polyroots.root_factors(poly1.poly, t)
     out = []
     for i, val in enumerate(factors):
         if val.is_real:
