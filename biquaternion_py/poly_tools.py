@@ -6,7 +6,18 @@ import sympy as sy
 
 
 def max_real_poly_fact(poly):
-    """Calculate maximal real polynomial factor of the BiQuaternionpolynomial `poly`."""
+    """Calculate maximal real polynomial factor of the BiQuaternionpolynomial `poly`.
+
+    Parameters
+    ----------
+    poly : Poly
+        Polynomial of which to find the maximal real factor.
+
+    Returns
+    -------
+    gcd : Poly
+        Maximal real factor of `poly`
+    """
     if len(poly.indets) != 1:
         raise ValueError("Only univariate polynomials are supported.")
     if not isinstance(poly.poly, BiQuaternion):
@@ -25,7 +36,19 @@ def max_real_poly_fact(poly):
 
 
 def gcd_conj_pd(poly):
-    """Real gcd of c, primal*dual.conjugate(), primal.conjugate()*dual."""
+    """Real gcd of c, primal*dual.conjugate(), primal.conjugate()*dual.
+
+    Parameters
+    ----------
+    poly : Poly
+        Polynomial of which to find the gcd of maximal real poly factor of the
+    primal part, primal*dual.conjugate(), primal.conjugate()*dual
+
+    Returns
+    -------
+    gcd : Poly
+
+    """
     c = max_real_poly_fact(poly.primal())
     primal = (poly * (1 / c)).poly.primal()
     dual = poly.poly.dual()
@@ -76,12 +99,9 @@ def is_poly_reduced(poly):
     )
 
 
-# def is_poly_real(poly):
-#     return np.allclose(poly.poly.coeffs[1:], np.zeros(7))
-
-
 def irreducible_factors(poly, domain=None):
     """Calculate the irreducible factors of a polynomial.
+
     Parameters
     ----------
     poly : Poly
@@ -100,8 +120,6 @@ def irreducible_factors(poly, domain=None):
     If the irreducible factors are not calculated correctly this might be an issue
     of sympy assuming to much about the domain. Chaning this to "QQ" or "RR"
     """
-    # if not is_poly_real(poly):
-    #     raise ValueError("Polynomial must have real coefficients.")
     var = poly.indets[0]
     t = sy.Symbol(var.name, real=True)
     poly1 = Poly(poly.poly.subs({var: t}), t)
@@ -125,7 +143,22 @@ def irreducible_factors(poly, domain=None):
 
 
 def split_lin_factor(poly, norm):
-    """Split off linear factor with norm `norm` from poly."""
+    """Split off linear factor with norm `norm` from poly.
+
+    Parameters
+    ----------
+    poly : Poly
+        Polynomial of which to split of a linear factor
+    norm : Poly
+        Norm of the linear factor to split off
+
+    Returns
+    -------
+    quot : Poly
+        Quotient of the polynomial left division of `poly` by `norm`
+    lin_fact : Poly
+        Linearfactor that was split off corresponding to `norm`
+    """
     if len(poly.indets) != 1:
         raise ValueError("Only univariate polynomials supported.")
     if poly.indets != norm.indets:
@@ -140,7 +173,20 @@ def split_lin_factor(poly, norm):
 
 
 def factorize_from_list(poly, factors):
-    """Factorize polynomial given a list of factors of the norm polynomial."""
+    """Factorize polynomial given a list of factors of the norm polynomial.
+
+    Parameters
+    ----------
+    poly : Poly
+        Polynomial which to factorize
+    factors : array of Poly
+        Array of irreducible factors of the norm polynomial of `poly`
+
+    Returns
+    -------
+    out : array of Poly
+        Array of linear factors of Poly corresponding to the order of factors
+    """
     if len(poly.indets) != 1:
         raise ValueError("Only univariate polynomials supported.")
     out = []
@@ -154,7 +200,18 @@ def factorize_from_list(poly, factors):
 
 
 def factorize_bq_poly(poly):
-    """Factorize Biquaternion polynomial into linear factors."""
+    """Factorize Biquaternion polynomial into linear factors.
+
+    Parameters
+    ----------
+    poly : Poly
+        Polynomial which to factorize
+    Returns
+    -------
+    factors : array of Poly
+        Array of linear factors of `poly` associated to the order of the factors
+    given by irreducible_factors.
+    """
     norm = poly.norm()
     # if not is_poly_real(norm):
     #     raise ValueError("Norm must be a real polynomial.")
