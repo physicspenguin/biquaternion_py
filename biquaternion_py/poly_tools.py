@@ -199,13 +199,16 @@ def factorize_from_list(poly, factors):
     return out
 
 
-def factorize_bq_poly(poly):
+def factorize_bq_poly(poly, domain=None):
     """Factorize Biquaternion polynomial into linear factors.
 
     Parameters
     ----------
     poly : Poly
         Polynomial which to factorize
+    domain : string, optional
+        Domain over which to calculate the irreducible factors.
+        (Default None lets sympy decide which domain to use.)
     Returns
     -------
     factors : array of Poly
@@ -216,5 +219,5 @@ def factorize_bq_poly(poly):
     # if not is_poly_real(norm):
     #     raise ValueError("Norm must be a real polynomial.")
     norm = Poly(norm.poly.scal, *norm.indets)
-    _, factors = irreducible_factors(norm)
+    _, factors = irreducible_factors(norm, domain)
     return factorize_from_list(poly, factors)
