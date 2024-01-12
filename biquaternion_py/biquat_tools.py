@@ -1,5 +1,9 @@
+"""
+Module containing extra generation tools and function for specialized BiQuaternions.
+"""
 import numpy as np
 from .biquaternion import BiQuaternion, EE
+from .lines import quat_to_pluecker, pluecker_to_quat, act_on_line
 
 
 def point_to_quat(coord):
@@ -31,33 +35,9 @@ def quat_to_hom_point(quat):
         raise ValueError("Object not a valid description of a point")
 
 
-def pluecker_to_quat(coord):
-    """Generate BiQuaternion reperesentation of a line with specified
-    Pluecker coordinates."""
-    return BiQuaternion([0, *coord[0:3], 0, *[-coord[i + 3] for i in range(3)]])
-
-
-def quat_to_pluecker(quat):
-    """Generate pluecker coordinates from a given BiQuaternion."""
-    if quat.scal == 0 and quat.eps == 0:
-        return [*quat.coeffs[1, 2, 3], *(-quat[5, 6, 7])]
-    else:
-        raise ValueError("Object not a valid description of a line")
-
-
-def line_to_pluecker(direction, point):
-    """Generate Pluecker coordinates for a line with given direction through a point."""
-    return [*direction, -np.cross(direction, point)]
-
-
 def act_on_point(quaternion, x):
     """Let a BiQuaternion act on a point."""
     return quaternion.eps_conjugate() * x * quaternion.conjugate()
-
-
-def act_on_line(quaternion, lin):
-    """Let a BiQuaternion act on a line."""
-    return quaternion * lin * quaternion.conjugate()
 
 
 def smart_act(quat, obj):
@@ -68,8 +48,7 @@ def smart_act(quat, obj):
         # Detect if it is a line
         if obj.scal.expand() == 0 and obj.primal() != 0:
             return act_on_line(quat, obj)
-        else:
-            return act_on_point(quat, obj)
+        return act_on_point(quat, obj)
     elif isinstance(obj, (list, tuple, np.ndarray)):
         if len(obj) == 3:
             return quat_to_point(act_on_point(quat, point_to_quat(obj)))

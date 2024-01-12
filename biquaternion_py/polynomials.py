@@ -300,6 +300,11 @@ class Poly(Expr):
         -------
         type(val)
         """
+        if not isinstance(vals, list):
+            if isinstance(vals, tuple):
+                vals = list(vals)
+            else:
+                vals = [vals]
         return _eval_poly(self.all_coeffs(), vals, right)
 
     def terms(self):

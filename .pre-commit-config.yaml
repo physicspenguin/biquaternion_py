@@ -8,7 +8,7 @@ repos:
       - id: flake8
         name: flake8
         language: system
-        entry: flake8 biquat_py/ tests/
+        entry: flake8 biquaternion_py/ tests/
         pass_filenames: false
       - id: pytets
         name: pytest

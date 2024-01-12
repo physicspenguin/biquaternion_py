@@ -17,6 +17,7 @@ This documentation is not yet complete.
 
 Usage
 ipynb_notebooks/Tutorial
+ipynb_notebooks/Pitfalls
 
 modules
 ```

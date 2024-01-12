@@ -561,6 +561,10 @@ class BiQuaternion(Expr):
         """
         return self * (self.conjugate())
 
+    def norm(self):
+        """Extra mapping of quadrance to the term norm, which is commonly used."""
+        return self.quadrance()
+
     def __invert__(self):
         """(Bi)-Quaternion conjugate of the quaternion.
 
@@ -634,7 +638,7 @@ class BiQuaternion(Expr):
         any of the numbers i, j, or k
 
         """
-        return BiQuaternion([self.coeffs[0], 0, 0, 0, self.coeffs[5], 0, 0, 0])
+        return BiQuaternion([self.coeffs[0], 0, 0, 0, self.coeffs[4], 0, 0, 0])
 
     def vector_part(self):
         """Vector part of the dual quaternion.
