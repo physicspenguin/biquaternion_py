@@ -1,6 +1,8 @@
-from .biquaternion import BiQuaternion
+"""Module for generation of random objects"""
+
 import numpy.random as rand
 from sympy import Rational
+from .biquaternion import BiQuaternion
 
 
 def rand_rational(maximum=10):
@@ -34,6 +36,7 @@ def rand_bq(maximum=10):
 
 
 def rand_line(maximum=10):
+    """Random line with rational coefficients"""
     p = [rand_rational(maximum) for i in range(4)]
     q = [rand_rational(maximum) for i in range(4)]
     return BiQuaternion(
